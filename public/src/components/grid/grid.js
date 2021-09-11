@@ -39,11 +39,12 @@ export default {
   },
   computed: {
     imagesNotInUse() {
-      if (!this.rimCells || this.rimCells.length == 0 || this.rimCells.map(c => c.data).filter(c => c !== null).length == 0) return Images
-      return Images.filter(image => !this.rimCells.map(cell => cell.data).includes(image.data) && (this.centerCell.data !== image.data))
+      if (!this.rimCells || this.rimCells.length == 0 || this.rimCells.map(c => c.data).filter(c => c !== null).length == 0) return Images.rimImages
+      return Images.rimImages.filter(image => !this.rimCells.map(cell => cell.data).includes(image.data) && (this.centerCell.data !== image.data))
     }
   },
   mounted() {
+    console.log(Images)
     window.addEventListener('resize', this.resizeGrid)
 
     this.resizeGrid()
@@ -81,6 +82,10 @@ export default {
     getRandomNotUsedImage() {
       let randomIdx = Math.floor(Math.random() * this.imagesNotInUse.length)
       return this.imagesNotInUse[randomIdx]
+    },
+    getRandomCenterCellImage() {
+      let randomIdx = Math.floor(Math.random() * Images.centerImages.length)
+      return Images.centerImages[randomIdx]
     },
     moveGridClockwise() {
       let clockWiseIndexOrder = [0, 1, 2, 3, 4, 6, 8, 10, 15, 14, 13, 12, 11, 9, 7, 5]
@@ -121,7 +126,7 @@ export default {
       }
     },
     randomizeCenterCell() {
-      this.centerCell = { ...this.getRandomNotUsedImage(), startingIndex: null }
+      this.centerCell = { ...this.getRandomCenterCellImage(), startingIndex: null }
     },
     resizeGrid() {
       const grid = document.querySelector('.grid')

@@ -10,6 +10,7 @@
         position: 'absolute',
         top: cell.position.y * rimCellHeight + 'px',
         left: cell.position.x * rimCellWidth + 'px',
+        zIndex: index === 0 ? '-1' : '1'
       }"
       class="outer-cell"
       @cell-clicked="outerCellClicked(cell, index)"

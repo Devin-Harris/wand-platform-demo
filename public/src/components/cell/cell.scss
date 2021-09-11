@@ -1,5 +1,5 @@
 .cell {
-  transition: .3s;
+  transition: 1s;
   cursor: pointer;
   position: relative;
   &:after {
@@ -21,6 +21,6 @@
     outline: 0;
     width: inherit;
     height: inherit;
-    object-fit: cover;
+    // object-fit: cover;
   }
 }
