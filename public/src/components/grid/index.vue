@@ -18,11 +18,11 @@
       class="main-cell"
       :cell="centerCell"
       :style="{
-        width: 3 * rimCellWidth + 'px',
-        height: 3 * rimCellHeight + 'px',
+        width: 2.75 * rimCellWidth + 'px',
+        height: 2.75 * rimCellHeight + 'px',
         position: 'absolute',
-        top: rimCellHeight + 'px',
-        left: rimCellWidth + 'px',
+        top: 1.125 * rimCellHeight + 'px',
+        left: 1.125 * rimCellWidth + 'px',
       }"
       @cell-clicked="mainCellClick"
     ></cell>
