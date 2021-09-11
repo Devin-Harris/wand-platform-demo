@@ -1,3 +1,8 @@
+import Grid from '@/components/grid'
+
 export default {
-  name: 'home'
+  name: 'home',
+  components: {
+    Grid
+  }
 }
