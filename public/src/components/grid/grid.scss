@@ -1,15 +1,8 @@
 .grid {
   background-color: aquamarine;
-  width: max-content;
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  grid-template-rows: repeat(5, 1fr);
-  grid-gap: 1rem;
-  place-items: center;
+  width: 100vw;
+  height: 100vh;
+  position: relative;
   .main-cell {
-    grid-column: 2 / span 3;
-    grid-row: 2 / span 3;
-    width: 32rem;
-    height: 32rem;
   }
 }
