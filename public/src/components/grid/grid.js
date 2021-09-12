@@ -29,6 +29,7 @@ export default {
         14: { x: 0, y: 3 },
         15: { x: 0, y: 2 },
         16: { x: 0, y: 1 },
+        17: { x: -1, y: 0 },
       },
       rimCount: 16,
       centerCellInterval: null,
@@ -44,7 +45,7 @@ export default {
     }
   },
   mounted() {
-    console.log(Images)
+    this.rimCount = Object.keys(this.rimCellPositions).length
     window.addEventListener('resize', this.resizeGrid)
 
     this.resizeGrid()
@@ -87,8 +88,26 @@ export default {
       let randomIdx = Math.floor(Math.random() * Images.centerImages.length)
       return Images.centerImages[randomIdx]
     },
+    isCellCorner(cell) {
+      const { x, y } = cell.position
+      return Boolean(
+        (x == 0 && y == 0) ||
+        (x == 4 && y == 0) ||
+        (x == 4 && y == 4) ||
+        (x == 0 && y == 4)
+      )
+    },
+    isPrevCellCorner(cell) {
+      const { x, y } = cell.position
+      return Boolean(
+        (x == 1 && y == 0) ||
+        (x == 4 && y == 1) ||
+        (x == 3 && y == 4) ||
+        (x == 0 && y == 3)
+      )
+    },
     moveGridClockwise() {
-      let clockWiseIndexOrder = [0, 1, 2, 3, 4, 6, 8, 10, 15, 14, 13, 12, 11, 9, 7, 5]
+      let clockWiseIndexOrder = [0, 1, 2, 3, 4, 5, 7, 9, 11, 16, 15, 14, 13, 12, 10, 8, 6]
 
       for (let i = 0; i < this.rimCount; i++) {
         let prevIndex = (i == 0) ? clockWiseIndexOrder[clockWiseIndexOrder.length - 1] : clockWiseIndexOrder[i - 1]
@@ -103,18 +122,17 @@ export default {
             keyPosition.y == currentCellPosition.y)
         }))
         const nextPositionIndex = (currentPositionIndex) == this.rimCount ? 1 : currentPositionIndex + 1
-
         this.rimCells[currIndex].position = this.rimCellPositions[nextPositionIndex]
-        if (nextPositionIndex === 1) {
+        if (nextPositionIndex === 17) {
           const randomImage = this.getRandomNotUsedImage()
           this.rimCells[currIndex].data = randomImage.data
           this.rimCells[currIndex].hyperLink = randomImage.hyperLink
         }
-        this.rimCells = [...this.rimCells]
       }
+      this.rimCells = [...this.rimCells]
     },
     randomizeGrid() {
-      let clockWiseIndexOrder = [0, 1, 2, 3, 4, 6, 8, 10, 15, 14, 13, 12, 11, 9, 7, 5]
+      let clockWiseIndexOrder = [0, 1, 2, 3, 4, 5, 7, 9, 11, 16, 15, 14, 13, 12, 10, 8, 6]
       for (let i = 0; i < this.rimCount; i++) {
         let currIndex = clockWiseIndexOrder[i]
         this.rimCells[currIndex] = {

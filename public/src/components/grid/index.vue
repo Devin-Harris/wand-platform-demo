@@ -10,12 +10,13 @@
         position: 'absolute',
         top: cell.position.y * rimCellHeight + 'px',
         left: cell.position.x * rimCellWidth + 'px',
-        zIndex: index === 0 ? '-1' : '1'
+        'z-index': isCellCorner(cell) ? '2' : isPrevCellCorner(cell) ? '1' : '5'
       }"
       class="outer-cell"
       @cell-clicked="outerCellClicked(cell, index)"
     ></cell>
     <cell
+      v-if="centerCell"
       class="main-cell"
       :cell="centerCell"
       :style="{
