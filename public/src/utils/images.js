@@ -34,15 +34,12 @@ const rimImages = [
 ]
 
 const centerImages = [
-  // { data: require('@/assets/images/cimages2 (1).jpg'), hyperLink: 'https://www.starlightbanking.com/' },
-  // { data: require('@/assets/images/cimages3.jpg'), hyperLink: 'https://www.starlightbanking.com/' },
-  // { data: require('@/assets/images/cimages4.jpg'), hyperLink: 'https://www.starlightbanking.com/' },
+  { data: require('@/assets/images/SHM Ad GIF.gif'), hyperLink: 'http://southhillsmovers.com/' },
   { data: require('@/assets/images/youtube.jpg'), hyperLink: 'https://www.youtube.com/' },
   { data: require('@/assets/images/cimages5.jpg'), hyperLink: 'https://translate.google.com/' },
   { data: require('@/assets/images/weather.jpg'), hyperLink: 'https://weather.com/' },
   { data: require('@/assets/images/facebook.jpg'), hyperLink: 'https://www.facebook.com/' },
   { data: require('@/assets/images/amazon.png'), hyperLink: 'https://www.amazon.com/' }
-  // { data: require('@/assets/images/paf.gif'), hyperLink: 'https://www.starlightbanking.com/' }
 ]
 
 export default { rimImages, centerImages }

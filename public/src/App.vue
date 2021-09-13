@@ -1,6 +1,9 @@
 <template>
   <div id="app">
-    <router-view/>
+    <fullscreen ref="fullscreen" @change="fullscreenChange">
+      <button @click="toggle">Clikc</button>
+      <router-view />
+    </fullscreen>
   </div>
 </template>
 
