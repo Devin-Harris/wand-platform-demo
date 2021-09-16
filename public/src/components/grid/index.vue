@@ -20,11 +20,11 @@
       class="main-cell"
       :cell="centerCell"
       :style="{
-        width: 2.75 * rimCellWidth + 'px',
-        height: 2.75 * rimCellHeight + 'px',
+        width: 3 * rimCellWidth - 24 + 'px',
+        height: 3 * rimCellHeight - 24 + 'px',
         position: 'absolute',
-        top: 1.125 * rimCellHeight + 'px',
-        left: 1.125 * rimCellWidth + 'px',
+        top: rimCellHeight + 12 + 'px',
+        left: rimCellWidth + 12 + 'px',
       }"
       @cell-clicked="mainCellClick"
     ></cell>

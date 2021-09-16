@@ -9,6 +9,7 @@ export default {
   data() {
     return {
       centerCell: null,
+      clickToClickThroughCount: 0,
       rimCells: [],
       rimCellWidth: 0,
       rimCellHeight: 0,
@@ -40,8 +41,10 @@ export default {
   },
   computed: {
     imagesNotInUse() {
-      if (!this.rimCells || this.rimCells.length == 0 || this.rimCells.map(c => c.data).filter(c => c !== null).length == 0) return Images.rimImages
-      return Images.rimImages.filter(image => !this.rimCells.map(cell => cell.data).includes(image.data) && (this.centerCell.data !== image.data))
+      if (!this.rimCells || this.rimCells.length == 0 || this.rimCells.map(c => c.data).filter(c => c !== null).length == 0) return [...Images.rimImages, ...Images.centerImages]
+      return [...Images.rimImages, ...Images.centerImages].filter(image => {
+        return !this.rimCells.some(cell => cell.data === image.data || cell.data === image.data2) && (this.centerCell.data !== image.data)
+      })
     }
   },
   mounted() {
@@ -63,6 +66,7 @@ export default {
   },
   methods: {
     outerCellClicked(cell, index) {
+      this.clickToClickThroughCount = 0
       this.centerCell = { ...cell }
       this.stopCellInterval()
       this.startCellInterval()
@@ -71,7 +75,16 @@ export default {
       this.rimCells[index].hyperLink = randomImage.hyperLink
     },
     mainCellClick() {
-      window.open(this.centerCell.hyperLink)
+      if (this.centerCell.data2) {
+        if (this.clickToClickThroughCount > 0) {
+          window.open(this.centerCell.hyperLink)
+        } else {
+          this.centerCell.data = this.centerCell.data2
+          this.clickToClickThroughCount += 1
+        }
+      } else if (this.centerCell.hyperLink) {
+        window.open(this.centerCell.hyperLink)
+      }
     },
     clearRimCells() {
       let arr = []
@@ -85,8 +98,10 @@ export default {
       return this.imagesNotInUse[randomIdx]
     },
     getRandomCenterCellImage() {
-      let randomIdx = Math.floor(Math.random() * Images.centerImages.length)
-      return Images.centerImages[randomIdx]
+      let possibleCenterImages = [...Images.centerImages.filter(image => this.rimCells.some(cell => image.data === cell.data))]
+      if (!this.rimCells || this.rimCells.length === 0) possibleCenterImages = [...Images.centerImages]
+      let randomIdx = Math.floor(Math.random() * possibleCenterImages.length)
+      return possibleCenterImages[randomIdx]
     },
     isCellCorner(cell) {
       const { x, y } = cell.position
@@ -126,6 +141,7 @@ export default {
         if (nextPositionIndex === 17) {
           const randomImage = this.getRandomNotUsedImage()
           this.rimCells[currIndex].data = randomImage.data
+          if (randomImage.data2) this.rimCells[currIndex].data2 = randomImage.data2
           this.rimCells[currIndex].hyperLink = randomImage.hyperLink
         }
       }
@@ -144,6 +160,7 @@ export default {
       }
     },
     randomizeCenterCell() {
+      this.clickToClickThroughCount = 0
       this.centerCell = { ...this.getRandomCenterCellImage(), startingIndex: null }
     },
     resizeGrid() {
