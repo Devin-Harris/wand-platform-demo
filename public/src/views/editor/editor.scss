@@ -1,0 +1,111 @@
+.editor {
+  button {
+    cursor: pointer;
+    margin: .5rem 0;
+    border-radius: .25rem;
+    padding: .5rem .75rem;
+    border: none;
+    outline: none;
+    background-color: rgb(0, 110, 255);
+    color: white;
+    transition: .3s;
+    &.inactive {
+      background-color: rgb(211, 211, 211);
+      pointer-events: none;
+    }
+  }
+  
+  .login {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: max-content;
+    margin: 0 auto;
+    p {
+      &.incorrect {
+        color: rgb(252, 35, 20);
+      }
+    }
+    input {
+      width: 100%;
+      margin: .5rem 0;
+      outline: none;
+      border: 1px solid rgb(211, 211, 211);
+      border-radius: .25rem;
+      padding: .5rem .75rem;
+      &.incorrect {
+        border-color: rgb(252, 35, 20);
+      }
+    }
+  }
+
+  .images {
+    text-align: center;
+    margin: 1rem 0;
+    font-family: sans-serif;
+    h1 {
+      margin: 1rem 0;
+      font-weight: 900;
+    }
+    .content {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      .centerImages, .rimImages {
+        margin: 1rem 2rem;
+        border: 1px solid rgb(211, 211, 211);
+        border-radius: .25rem;
+        h6 {
+          padding: .5rem 0;
+          color: Black;
+          background-color: rgb(235, 235, 235);
+          text-align: center;
+          font-size: 1.5rem;
+          margin-bottom: .5rem;
+          i {
+            font-size: 1rem;
+            cursor: pointer;
+            transition: .3s;
+            &:hover {
+              color: rgb(0, 110, 255);
+            }
+          }
+        }
+        &-container {
+          display: grid;
+          grid-template-columns: repeat(5, 1fr);
+          .image {
+            height: 10rem;
+            width: 10rem;
+            position: relative;
+            img {
+              height: 100%;
+              width: 100%;
+              object-fit: cover;
+            }
+            &::after {
+              content: '';
+              position: absolute;
+              top: 0;
+              left: 0;
+              height: 100%;
+              width: 100%;
+              background-color: rgba(0, 0, 0, 0.5);
+              opacity: 0;
+              transition: .3s;
+            }
+            &:hover {
+              &::after {
+                cursor: pointer;
+                opacity: 1;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

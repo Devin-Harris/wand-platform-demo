@@ -7,7 +7,27 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: () => import(/* webpackChunkName: "about" */ '../views/Home')
+    component: () => import(/* webpackChunkName: "home" */ '../views/Home')
+  },
+  {
+    path: '/editor',
+    name: 'Editor',
+    component: () => import(/* webpackChunkName: "editor" */ '../views/editor')
+  },
+  {
+    path: '/editor/add',
+    name: 'Editor Add',
+    component: () => import(/* webpackChunkName: "add" */ '../views/editor/add')
+  },
+  {
+    path: '/editor/edit/:id',
+    name: 'Editor Edit',
+    component: () => import(/* webpackChunkName: "edit" */ '../views/editor/edit')
+  },
+  {
+    path: '/translator',
+    name: 'Translator',
+    component: () => import(/* webpackChunkName: "edit" */ '../components/translator')
   }
 ]
 

@@ -1,0 +1,142 @@
+.translator {
+  height: 100%;
+  width: 100%;
+  margin: 0 auto;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  h1 {
+    font-family: sans-serif;
+    text-align: center;
+    padding: 1rem 0;
+  }
+  .translation-boxs {
+    flex-grow: 1;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    height: auto;
+
+    .dropdown {
+      width: 100%;
+      margin-bottom: .5rem;
+    }
+    .input {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      height: 100%;
+      position: relative;
+      .dropdown {
+        width: calc(100% - .5rem);
+        margin-right: .5rem;
+      }
+    }
+    .output {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      height: 100%;
+      .dropdown {
+        width: calc(100% - .5rem);
+        margin-left: .5rem;
+      }
+    }
+  
+    textarea, #outputPhrase {
+      width: 100%;
+      flex-grow: 1;
+      outline: none;
+      font-size: 1.5rem;
+      font-family: sans-serif;
+      padding: 1rem;
+      resize: none;
+      border: 1px solid rgb(214, 214, 214);
+    }
+
+    .character-count {
+      position: absolute;
+      bottom: .5rem;
+      right: .5rem;
+      z-index: 5;
+      font-family: sans-serif;
+    }
+  
+    #outputPhrase {
+      border-left: 0;
+      height: 100%;
+      .loading {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        i {
+          margin-right: .5rem;
+        }
+      }
+    }
+  }
+
+}
+
+// X-Small devices (portrait phones, less than 576px)
+// No media query for `xs` since this is the default in Bootstrap
+
+// X-Large devices (large desktops, 1200px and up)
+@media (max-width: 1200px) {
+
+}
+
+// Large devices (desktops, 992px and up)
+@media (max-width: 992px) {
+
+}
+
+// Medium devices (tablets, 768px and up)
+@media (max-width: 768px) {
+  .translator {
+    .translation-boxs {
+      .dropdown {
+        &-label {
+          padding: .5rem .75rem;
+          font-size: 80%;
+        }
+        &-popup {
+          font-size: 80%;
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      textarea, #outputPhrase {
+        font-size: 80%;
+      }
+      .character-count {
+        font-size: 80%;
+      }
+    }
+  }
+}
+
+// Small devices (landscape phones, 576px and up)
+@media (max-width: 576px) {
+  .translator {
+    .translation-boxs {
+      .dropdown {
+        &-label {
+          font-size: 70%;
+        }
+        &-popup {
+          font-size: 70%;
+          grid-template-columns: 1fr;
+        }
+      }
+      textarea, #outputPhrase {
+        font-size: 70%;
+      }
+      .character-count {
+        font-size: 70%;
+      }
+    }
+  }
+}
