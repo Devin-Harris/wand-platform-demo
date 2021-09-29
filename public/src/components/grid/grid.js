@@ -13,7 +13,7 @@ export default {
       CENTER_IMAGES: [],
       centerCell: null,
       clickToClickThroughCount: 0,
-      usingWidgets: false,
+      usingLocalData: false,
       rimCells: [],
       rimCellWidth: 0,
       rimCellHeight: 0,
@@ -60,8 +60,11 @@ export default {
     window.addEventListener('resize', this.resizeGrid)
 
     this.resizeGrid()
-    // this.randomizeCenterCell()
-    this.centerCell = this.CENTER_IMAGES.find(image => image.hyperLink === 'https://translate.google.com/')
+    if (this.usingLocalData) {
+      this.randomizeCenterCell()
+    } else {
+      this.centerCell = this.CENTER_IMAGES.find(image => image.hyperLink === 'https://translate.google.com/')
+    }
     this.clearRimCells()
     this.randomizeGrid()
 
@@ -161,6 +164,7 @@ export default {
           this.rimCells[currIndex].data = randomImage.data
           if (randomImage.data2) this.rimCells[currIndex].data2 = randomImage.data2
           this.rimCells[currIndex].hyperLink = randomImage.hyperLink
+          this.rimCells[currIndex].name = randomImage.name
         }
       }
       this.rimCells = [...this.rimCells]
@@ -179,7 +183,7 @@ export default {
     },
     randomizeCenterCell() {
       this.clickToClickThroughCount = 0
-      this.centerCell = this.usingWidgets ? { ...this.getRandomCenterCellWidget(), startingIndex: null } : { ...this.getRandomCenterCellImage(), startingIndex: null }
+      this.centerCell = this.usingLocalData ? { ...this.getRandomCenterCellWidget(), startingIndex: null } : { ...this.getRandomCenterCellImage(), startingIndex: null }
     },
     resizeGrid() {
       const grid = document.querySelector('.grid')

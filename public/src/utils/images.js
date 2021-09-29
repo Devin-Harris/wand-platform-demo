@@ -44,9 +44,9 @@ const centerImages = [
 ]
 
 const centerWidgets = [
-  { data: {"isEmbed": true, 'component': 'translator' } },
-  { data: {"data": "https://www.weatherusa.net/", "isWidget": true } },
-  { data: {"data": "https://abcnews.go.com/", "isWidget": true } }
+  // { data: {"isEmbed": true, 'component': 'translator' } },
+  { data: "https://wandadvertising.com/ads/weather.jpg", hyperLink: "https://weather.com/", isCenterImage: true, data2: { "isEmbed": true, 'component': 'weather' } }
+  // { data: {"data": "https://abcnews.go.com/", "isWidget": true } }l
 ]
 
 export default { rimImages, centerImages, centerWidgets }

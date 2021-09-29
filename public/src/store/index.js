@@ -20,9 +20,21 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    addImage({ dispatch }, { hyperLink, file, isCenterImage }) {
+    addImage({ dispatch }, { hyperLink, file, isCenterImage, locations, name, data2Info }) {
       return new Promise(async (resolve, reject) => {
         try {
+
+          let data2 = null
+          if (data2Info.action === 'image') {
+            const uploadResponse = await dispatch('uploadImage', data2Info.file)
+            const data = IMAGE_BASE_URL + uploadResponse.name
+            data2 = data
+          } else if (data2Info.action === 'iframe') {
+            data2 = { data: data2Info.iframeLink, isWidget: true }
+          } else if (data2Info.action === 'application') {
+            data2 = { component: data2Info.applicationEmbedName, isEmbed: true }
+          }
+
           const uploadResponse = await dispatch('uploadImage', file)
           const data = IMAGE_BASE_URL + uploadResponse.name
           const res = await fetch(api + '/add', {
@@ -33,7 +45,10 @@ export default new Vuex.Store({
             body: JSON.stringify({
               data,
               hyperLink,
-              isCenterImage
+              isCenterImage,
+              locations,
+              name,
+              data2
             })
           })
           const json = await res.json()
@@ -143,13 +158,22 @@ export default new Vuex.Store({
       })
     },
     updateImageById({ dispatch }, { id, payload }) {
-      const { prevDataPath, file, hyperLink, isCenterImage } = payload
+      const { prevDataPath, file, hyperLink, isCenterImage, locations, name, data2Info } = payload
       return new Promise(async (resolve, reject) => {
         try {
-          let body = {
-            hyperLink,
-            isCenterImage
+          let data2 = null
+          if (data2Info.action === 'image') {
+            const uploadResponse = await dispatch('uploadImage', data2Info.file)
+            const data = IMAGE_BASE_URL + uploadResponse.name
+            data2 = data
+          } else if (data2Info.action === 'iframe') {
+            data2 = { data: data2Info.iframeLink, isWidget: true }
+          } else if (data2Info.action === 'application') {
+            data2 = { component: data2Info.applicationEmbedName, isEmbed: true }
           }
+          
+
+          let body = { hyperLink, isCenterImage, locations, name, data2 }
           if (file) {
             const uploadResponse = await dispatch('uploadImage', file)
             const data = IMAGE_BASE_URL + uploadResponse.name

@@ -4,16 +4,21 @@ export default {
   name: 'add',
   data() {
     return {
-      googleLink: '',
       hasFile: false,
+      dataLink: '',
       hyperLink: '',
-      res: null
+      iframeLink: '',
+      applicationEmbedName: '',
+      hyperLink: '',
+      res: null,
+      name: '',
+      action: null
     }
   },
   computed: {
     ...mapGetters(['getIsLoggedIntoEditor']),
     canSubmit() {
-      return Boolean(this.hasFile && this.hyperLink)
+      return Boolean(this.hasFile && (this.hyperLink || (this.iframeLink || this.applicationEmbedName)))
     }
   },
   async created() {
@@ -22,26 +27,32 @@ export default {
   methods: {
     ...mapActions(['loginToEditor', 'addImage']),
     async add() {
-      // const formattedGoogleLink = `https://drive.google.com/uc?id=${this.getGoogleLinkId()}`
       const res = await this.addImage({
         file: this.$refs.inputFile.files[0],
         hyperLink: this.hyperLink,
-        isCenterImage: Boolean(this.$route.query.isCenterImage)
+        isCenterImage: Boolean(this.$route.query.isCenterImage),
+        locations: [],
+        name: this.name,
+        data2Info: {
+          action: this.action,
+          hyperLink: this.hyperLink,
+          iframeLink: this.iframeLink,
+          applicationEmbedName: this.applicationEmbedName,
+          file: this.$refs.actionInputFile.files[0] ? this.$refs.actionInputFile.files[0] : null,
+        }
       })
       this.res = res
       this.$refs.inputFile.value = null
       this.hyperLink = ''
     },
-    getGoogleLinkId() {
-      if (!this.googleLink) return null
-      return (this.googleLink.includes('/d/') && this.googleLink.includes('/view?usp=sharing'))
-        ? this.googleLink.split('/d/')[1].split('/view?usp=sharing')[0]
-        : this.googleLink.includes('?id=')
-          ? this.googleLink.split('?id=')[1]
-          : null
-    },
     setHasFile(e) {
       this.hasFile = Boolean(e.target.value)
+    },
+    setAction(action) {
+      this.hyperLink = ''
+      this.iframeLink = ''
+      this.applicationEmbedName = ''
+      this.action = action
     }
   }
 }

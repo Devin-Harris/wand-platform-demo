@@ -65,10 +65,5 @@ export default {
       if (this.inputPhrase.length > this.characterLimit) this.inputPhrase = this.inputPhrase.substring(0, this.inputPhrase.length - 1)
       this.loadingOutput = true
     }
-  },
-  watch: {
-    inputPhrase() {
-      
-    }
   }
 }
