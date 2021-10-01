@@ -1,10 +1,10 @@
 import { mapActions } from 'vuex'
-import Dropdown from '@/components/dropdown'
+import GoogleDropdown from '@/components/dropdowns/google-dropdown'
 
 export default {
   name: 'translator',
   components: {
-    Dropdown
+    GoogleDropdown
   },
   data() {
     return {

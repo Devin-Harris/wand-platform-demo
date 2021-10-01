@@ -11,5 +11,5 @@
   </div>
 </template>
 
-<script src='./dropdown.js'></script>
-<style src='./dropdown.scss' lang="scss"></style>
+<script src='./google-dropdown.js'></script>
+<style src='./google-dropdown.scss' lang="scss"></style>

@@ -1,11 +1,7 @@
 import { mapActions } from 'vuex'
-import Dropdown from '@/components/dropdown'
 
 export default {
   name: 'weather',
-  components: {
-    Dropdown
-  },
   data() {
     return {
       locationInput: '',

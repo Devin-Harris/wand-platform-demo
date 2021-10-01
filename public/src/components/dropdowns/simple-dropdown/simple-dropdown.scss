@@ -1,0 +1,89 @@
+.simple-dropdown {
+  position: relative;
+  width: 100%;
+  &_label {
+    width: 100%;
+    border: 1px solid rgb(211, 211, 211);
+    border-radius: .25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: .5rem .75rem;
+    transition: .3s;
+    .placeholder {
+      color: rgb(211, 211, 211);
+    }
+    i {
+      color: rgb(211, 211, 211);
+      transform: rotate(0deg);
+      transition: .3s;
+      &.rotated-up {
+        transform: rotate(180deg);
+      }
+    }
+    &:hover {
+      cursor: pointer;
+      border-color: rgb(0, 110, 255);
+      i {
+        color: black;
+      } 
+    }
+  }
+  .arrow {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    height: 1rem;
+    width: 1rem;
+    background-color: white;
+    border: 1px solid rgb(211, 211, 211);
+    z-index: 2;
+    transform: rotate(45deg) translate(-50%, 0%);
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 1rem;
+      width: 1rem;
+      background-color: white;
+    }
+  }
+  &_items {
+    border: 1px solid rgb(211, 211, 211);
+    border-radius: .25rem;
+    position: absolute;
+    width: 100%;
+    top: calc(100% + .2rem);
+    left: 50%;
+    z-index: 1;
+    transform: translateX(-50%);
+    overflow: hidden;
+    &_item {
+      padding: .5rem .75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: .3s;
+      cursor: pointer;
+      background-color: white;
+      border-bottom: 2px solid transparent;
+      &:nth-child(even) {
+        background-color: rgb(250, 250, 250);
+      }
+      &:hover {
+        color: rgb(0, 110, 255);
+        border-bottom: 2px solid rgb(0, 110, 255);
+      }
+      &.selected {
+        // pointer-events: none;
+      }
+      i {
+        opacity: 0;
+        &.shown {
+          opacity: 1;
+        }
+      }
+    }
+  }
+}

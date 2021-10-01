@@ -1,21 +1,21 @@
 export default {
-  name: 'dropdown',
-  props: ['selectedItem', 'items', 'isDropdownGrid', 'keyBase'],
+  name: 'simple-dropdown',
+  props: ['items', 'selectedItem', 'placeholderText'],
   data() {
     return {
       isDropdownOpen: false
     }
   },
   methods: {
-    itemClick(item) {
-      this.$emit('item-selected', item)
-      this.closeIsDropdownOpen()
-    },
     closeIsDropdownOpen() {
       this.isDropdownOpen = false
     },
     toggleIsDropdownOpen() {
       this.isDropdownOpen = !this.isDropdownOpen
+    },
+    selectItem(item) {
+      this.$emit('selected-item', item)
+      this.closeIsDropdownOpen()
     }
   }
 }

@@ -7,20 +7,27 @@ const IMAGE_BASE_URL = 'https://wandadvertising.com/ads/'
 
 export default new Vuex.Store({
   state: {
-    isLoggedIntoEditor: false
+    isLoggedIntoEditor: false,
+    platform: null,
   },
   getters: {
     getIsLoggedIntoEditor(state) {
       return state.isLoggedIntoEditor
+    },
+    getPlatform(state) {
+      return state.platform
     }
   },
   mutations: {
     setIsLoggedIntoEditor(state, isLoggedIntoEditor) {
       state.isLoggedIntoEditor = isLoggedIntoEditor
+    },
+    setPlatform(state, platform) {
+      state.platform = platform
     }
   },
   actions: {
-    addImage({ dispatch }, { hyperLink, file, isCenterImage, locations, name, data2Info }) {
+    addImage({ dispatch, commit }, { hyperLink, file, isCenterImage, locations, ignoreLocations, name, data2Info, platformInfo }) {
       return new Promise(async (resolve, reject) => {
         try {
 
@@ -35,6 +42,19 @@ export default new Vuex.Store({
             data2 = { component: data2Info.applicationEmbedName, isEmbed: true }
           }
 
+          // format locations
+          const formattedLocations = locations.map(location => {
+            return {
+              radius: location?.radius,
+              radiusUnit: location?.radiusUnit,
+              place_id: location?.place_id,
+              latitude: location?.geometry?.location?.lat,
+              longitude: location?.geometry?.location?.lng,
+              name: location?.name,
+              formatted_address: location?.formatted_address
+            }
+          })
+
           const uploadResponse = await dispatch('uploadImage', file)
           const data = IMAGE_BASE_URL + uploadResponse.name
           const res = await fetch(api + '/add', {
@@ -46,12 +66,34 @@ export default new Vuex.Store({
               data,
               hyperLink,
               isCenterImage,
-              locations,
+              ignoreLocations,
+              locations: formattedLocations,
               name,
               data2
             })
           })
           const json = await res.json()
+
+          platformInfo.image_id = json.image._id
+          const platformRes = await dispatch('updatePlatformInfo', platformInfo)
+          if (!platformRes.ok) resolve(platformRes)
+          else commit('setPlatform', platformRes.platform)
+
+          resolve(json)
+        } catch (e) {
+          reject(e)
+        }
+      })
+    },
+    checkAuthentication({ commit }) {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const res = await fetch(api + '/auth-check', {
+            method: 'GET',
+            credentials: 'include'
+          })
+          const json = await res.json()
+          await commit('setIsLoggedIntoEditor', json.ok)
           resolve(json)
         } catch (e) {
           reject(e)
@@ -85,10 +127,10 @@ export default new Vuex.Store({
         }
       })
     },
-    async fetchCenterImages() {
+    async fetchCenterImages(_, { ignoreLocations = false } = false) {
       return new Promise(async (resolve, reject) => {
         try {
-          const res = await fetch(api + '/center-images')
+          const res = await fetch(api + '/center-images?ignoreLocations=' + ignoreLocations)
           const json = await res.json()
           resolve(json)
         } catch (e) {
@@ -96,10 +138,33 @@ export default new Vuex.Store({
         }
       })
     },
-    async fetchRimImages() {
+    async fetchRimImages(_, { ignoreLocations = false } = false) {
       return new Promise(async (resolve, reject) => {
         try {
-          const res = await fetch(api + '/rim-images')
+          const res = await fetch(api + '/rim-images?ignoreLocations=' + ignoreLocations)
+          const json = await res.json()
+          resolve(json)
+        } catch (e) {
+          reject(e)
+        }
+      })
+    },
+    async fetchPlatform({ commit }) {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const res = await fetch(api + '/platform')
+          const json = await res.json()
+          commit('setPlatform', json.platform)
+          resolve(json)
+        } catch (e) {
+          reject(e)
+        }
+      })
+    },
+    async googleMapsSearch(_, query) {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const res = await fetch(api + '/google-maps-search/' + encodeURI(query))
           const json = await res.json()
           resolve(json)
         } catch (e) {
@@ -112,6 +177,7 @@ export default new Vuex.Store({
         try {
           const res = await fetch(api + '/editor-login', {
             method: 'POST',
+            credentials: 'include',
             headers: {
               'Content-Type': 'application/json'
             },
@@ -157,8 +223,8 @@ export default new Vuex.Store({
         }
       })
     },
-    updateImageById({ dispatch }, { id, payload }) {
-      const { prevDataPath, file, hyperLink, isCenterImage, locations, name, data2Info } = payload
+    updateImageById({ commit, dispatch }, { id, payload }) {
+      const { prevDataPath, file, hyperLink, isCenterImage, locations, ignoreLocations, name, data2Info, platformInfo } = payload
       return new Promise(async (resolve, reject) => {
         try {
           let data2 = null
@@ -172,8 +238,20 @@ export default new Vuex.Store({
             data2 = { component: data2Info.applicationEmbedName, isEmbed: true }
           }
           
+          // format locations
+          const formattedLocations = locations.map(location => {
+            return {
+              radius: location?.radius,
+              radiusUnit: location?.radiusUnit,
+              place_id: location?.place_id,
+              latitude: location?.geometry?.location?.lat ? location?.geometry?.location?.lat : location.latitude,
+              longitude: location?.geometry?.location?.lng ? location?.geometry?.location?.lng : location.longitude,
+              name: location?.name,
+              formatted_address: location?.formatted_address
+            }
+          })
 
-          let body = { hyperLink, isCenterImage, locations, name, data2 }
+          let body = { hyperLink, isCenterImage, locations: formattedLocations, ignoreLocations, name, data2 }
           if (file) {
             const uploadResponse = await dispatch('uploadImage', file)
             const data = IMAGE_BASE_URL + uploadResponse.name
@@ -187,6 +265,28 @@ export default new Vuex.Store({
               'Content-Type': 'application/json'
             },
             body: JSON.stringify(body)
+          })
+          
+          const platformRes = await dispatch('updatePlatformInfo', platformInfo)
+          if (!platformRes.ok) resolve(platformRes)
+          else commit('setPlatform', platformRes.platform)
+          
+          const json = await res.json()
+          resolve(json)
+        } catch (e) {
+          reject(e)
+        }
+      })
+    },
+    updatePlatformInfo({ }, { domain, isMainImageForDomain, image_id}) {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const res = await fetch(api + `/platform`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ domain, image_id, isMainImageForDomain })
           })
           const json = await res.json()
           resolve(json)

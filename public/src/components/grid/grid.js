@@ -1,6 +1,6 @@
 import Cell from '@/components/cell'
 import Images from '@/utils/images'
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'grid',
@@ -45,6 +45,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['getPlatform']),
     imagesNotInUse() {
       if (!this.rimCells || this.rimCells.length == 0 || this.rimCells.map(c => c.data).filter(c => c !== null).length == 0) return [...this.RIM_IMAGES, ...this.CENTER_IMAGES]
       return [...this.RIM_IMAGES, ...this.CENTER_IMAGES].filter(image => {
@@ -60,10 +61,14 @@ export default {
     window.addEventListener('resize', this.resizeGrid)
 
     this.resizeGrid()
-    if (this.usingLocalData) {
+    if (this.usingLocalData || this.getPlatform === null) {
       this.randomizeCenterCell()
     } else {
-      this.centerCell = this.CENTER_IMAGES.find(image => image.hyperLink === 'https://translate.google.com/')
+      if (this.getPlatform !== null) {
+        const foundImage = this.CENTER_IMAGES.find(image => image._id === this.getPlatform.image_id)
+        if (foundImage) this.centerCell = foundImage
+        else this.randomizeCenterCell()
+      }
     }
     this.clearRimCells()
     this.randomizeGrid()

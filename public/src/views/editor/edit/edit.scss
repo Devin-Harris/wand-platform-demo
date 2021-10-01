@@ -8,6 +8,7 @@
   button {
     cursor: pointer;
     margin: .5rem 0;
+    margin-bottom: 0;
     border-radius: .25rem;
     padding: .5rem .75rem;
     border: none;
@@ -36,8 +37,9 @@
     justify-content: center;
     align-items: center;
     width: max-content;
-    margin: 1rem auto;
+    margin: 0 auto;
     .input-container {
+      margin: .5rem 0;
       img {
         height: 10rem;
         margin: .75rem 0;
@@ -52,6 +54,159 @@
         &.incorrect {
           border-color: rgb(252, 35, 20);
         }
+      }
+    }
+
+    .locations {
+      position: relative;
+      .ignoreLocations {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: .25rem;
+        input {
+          width: unset;
+          margin: 0;
+          margin-right: .5rem;
+          cursor: pointer;
+        }
+        p {
+          cursor: pointer;
+        }
+      }
+      .search-field {
+        position: relative;
+        &.ignored {
+          input, input::placeholder, i {
+            pointer-events: none;
+            background-color: rgb(211, 211, 211);
+            color: rgb(126, 126, 126);
+          }
+        }
+        .field {
+          input {
+            padding-right: 2rem;
+            transition: .3s;
+          }
+          i {
+            position: absolute;
+            transition: .3s;
+            top: 50%;
+            right: .5rem;
+            transform: translateY(-50%);
+          }
+        }
+        .search-popup {
+          min-width: 100%;
+          width: max-content;
+          position: absolute;
+          z-index: 5;
+          background-color: white;
+          border: 1px solid rgb(211, 211, 211);
+          border-radius: .25rem;
+          top: 100%;
+          left: 50%;
+          transform: translateX(-50%);
+          .loading-search {
+            padding: 1rem;
+          }
+          .results {
+            max-height: 20rem;
+            overflow-y: scroll;
+            .result {
+              padding: .5rem;
+              padding-right: 1.5rem;
+              display: flex;
+              justify-content: flex-start;
+              align-items: center;
+              transition: .3s;
+              cursor: pointer;
+              &:hover {
+                background-color: rgb(236, 236, 236);
+              }
+              .icon {
+                padding: .5rem;
+                border-radius: 50%;
+                height: 2.5rem;
+                width: 2.5rem;
+                margin-right: .5rem;
+                img {
+                  height: 100%;
+                  width: 100%;
+                  object-fit: cover;
+                }
+              }
+              .text {
+                text-align: left;
+                p {
+                  cursor: pointer;
+                  transition: .3s;
+                  color:rgb(152, 195, 252);
+                  font-size: 70%;
+                }
+              }
+            }
+          }
+        }
+      }
+      
+      .choosen-locations {
+        &.ignored {
+          pointer-events: none;
+          .location {
+            background-color: rgb(211, 211, 211);
+            color: rgb(126, 126, 126);
+          }
+        }
+        .location {
+          background-color: rgb(211, 211, 211);
+          padding: .5rem;
+          border-radius: .25rem;
+          margin: .5rem auto;
+          .sides {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            .lhs {
+              text-align: left;
+            }
+            .rhs {
+              i {
+                transition: .3s;
+                cursor: pointer;
+                &:hover {
+                  color:rgb(95, 95, 95);
+                }
+              }
+            }
+          }
+          .radius {
+            text-align: left;
+            margin-top: 1rem;
+            input {
+              margin: .25rem 0;
+            }
+            .units {
+              display: flex;
+              justify-content: flex-start;
+              align-items: center;
+              p {
+                padding: .5rem 1rem;
+                background-color: rgb(152, 195, 252);
+                cursor: pointer;
+                transition: .3s;
+                color: white;
+                &:hover {
+                  background-color: rgb(0, 110, 255);
+                }
+                &.selected {
+                  background-color: rgb(0, 110, 255);
+                }
+              }
+            }
+          }
+        }
+
       }
     }
 
@@ -107,7 +262,47 @@
     }
 
     .actions {
-      margin-bottom: 1rem;
+      margin: .75rem auto 1.75rem auto;
+      .input-container {
+        p {
+          margin-bottom: .25rem;
+        }
+        input {
+          margin-top: 0;
+        }
+      }
     }
+    
+    .platform-info {
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      p {
+        cursor: pointer;
+        margin-left: .5rem;
+        span {
+          font-weight: 600;
+        }
+      }
+      input {
+        cursor: pointer;
+        width: 1rem;
+        height: 1rem;
+      }
+    }
+  }
+  .loading {
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.418);
+    color: white;
+    font-size: 800%;
   }
 }

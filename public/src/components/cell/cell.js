@@ -1,5 +1,5 @@
-import Translator from '@/components/translator'
-import Weather from '@/components/weather'
+import Translator from '@/components/applications/translator'
+import Weather from '@/components/applications/weather'
 
 export default {
   name: 'cell',
