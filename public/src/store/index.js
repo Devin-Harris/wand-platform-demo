@@ -27,7 +27,7 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    addImage({ dispatch, commit }, { hyperLink, file, isCenterImage, locations, ignoreLocations, name, data2Info, platformInfo }) {
+    addImage({ dispatch, commit, getters }, { hyperLink, file, isCenterImage, locations, ignoreLocations, name, data2Info, platformInfo, isHyperLinkVideo, videoHyperLink }) {
       return new Promise(async (resolve, reject) => {
         try {
 
@@ -55,22 +55,21 @@ export default new Vuex.Store({
             }
           })
 
-          const uploadResponse = await dispatch('uploadImage', file)
-          const data = IMAGE_BASE_URL + uploadResponse.name
-          const res = await fetch(api + '/add', {
+          let body = { hyperLink, isCenterImage, locations: formattedLocations, ignoreLocations, name, data2, isHyperLinkVideo }
+          if (file) {
+            const uploadResponse = await dispatch('uploadImage', file)
+            const data = IMAGE_BASE_URL + uploadResponse.name
+            body.data = data
+          } else {
+            body.data = videoHyperLink
+          }
+
+          const res = await fetch(api + '/add?image_collection_name=' + (getters.getPlatform?.images_collection_name || 'images'), {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-              data,
-              hyperLink,
-              isCenterImage,
-              ignoreLocations,
-              locations: formattedLocations,
-              name,
-              data2
-            })
+            body: JSON.stringify(body)
           })
           const json = await res.json()
 
@@ -116,10 +115,10 @@ export default new Vuex.Store({
         }
       })
     },
-    async fetchImageById(_, id) {
+    async fetchImageById({ getters }, id) {
       return new Promise(async (resolve, reject) => {
         try {
-          const res = await fetch(api + '/image/' + id)
+          const res = await fetch(api + '/image/' + id + '?image_collection_name=' + (getters.getPlatform?.images_collection_name || 'images'))
           const json = await res.json()
           resolve(json)
         } catch (e) {
@@ -127,10 +126,10 @@ export default new Vuex.Store({
         }
       })
     },
-    async fetchCenterImages(_, { ignoreLocations = false } = false) {
+    async fetchCenterImages({ getters }, { ignoreLocations = false } = false) {
       return new Promise(async (resolve, reject) => {
         try {
-          const res = await fetch(api + '/center-images?ignoreLocations=' + ignoreLocations)
+          const res = await fetch(api + '/center-images?ignoreLocations=' + ignoreLocations + '&image_collection_name=' + (getters.getPlatform?.images_collection_name || 'images'))
           const json = await res.json()
           resolve(json)
         } catch (e) {
@@ -138,10 +137,10 @@ export default new Vuex.Store({
         }
       })
     },
-    async fetchRimImages(_, { ignoreLocations = false } = false) {
+    async fetchRimImages({ getters }, { ignoreLocations = false } = false) {
       return new Promise(async (resolve, reject) => {
         try {
-          const res = await fetch(api + '/rim-images?ignoreLocations=' + ignoreLocations)
+          const res = await fetch(api + '/rim-images?ignoreLocations=' + ignoreLocations + '&image_collection_name=' + (getters.getPlatform?.images_collection_name || 'images'))
           const json = await res.json()
           resolve(json)
         } catch (e) {
@@ -149,12 +148,66 @@ export default new Vuex.Store({
         }
       })
     },
-    async fetchPlatform({ commit }) {
+    async incrementOuterImageClickThruCountById({ getters }, id) {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const res = await fetch(api + '/click-thru/' + id + '/outer?image_collection_name=' + (getters.getPlatform?.images_collection_name || 'images'), {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+          })
+          const json = await res.json()
+          resolve(json)
+        } catch (e) {
+          reject(e)
+        }
+      })
+    },
+    async incrementCenterImageClickThruCountById({ getters }, id) {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const res = await fetch(api + '/click-thru/' + id + '/center?image_collection_name=' + (getters.getPlatform?.images_collection_name || 'images'), {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+          })
+          const json = await res.json()
+          resolve(json)
+        } catch (e) {
+          reject(e)
+        }
+      })
+    },
+    async createPlatform({ commit }, { domain, images_collection_name }) {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const res = await fetch(api + '/platform', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ domain, images_collection_name })
+          })
+          const json = await res.json()
+          commit('setPlatform', json.platform)
+          resolve(json)
+        } catch (e) {
+          reject(e)
+        }
+      })
+    },
+    async fetchPlatform({ commit, dispatch }) {
       return new Promise(async (resolve, reject) => {
         try {
           const res = await fetch(api + '/platform')
           const json = await res.json()
-          commit('setPlatform', json.platform)
+          if (!json.platform) {
+            await dispatch('createPlatform', { domain: window.location.origin, images_collection_name: 'images' })
+          } else {
+            commit('setPlatform', json.platform)
+          }
           resolve(json)
         } catch (e) {
           reject(e)
@@ -193,10 +246,10 @@ export default new Vuex.Store({
         }
       })
     },
-    deleteImageById(_, id) {
+    deleteImageById({ getters }, id) {
       return new Promise(async (resolve, reject) => {
         try {
-          const res = await fetch(api + '/delete/' + id, {
+          const res = await fetch(api + '/delete/' + id + '?image_collection_name=' + (getters.getPlatform?.images_collection_name || 'images'), {
             method: 'DELETE'
           })
           const json = await res.json()
@@ -223,8 +276,8 @@ export default new Vuex.Store({
         }
       })
     },
-    updateImageById({ commit, dispatch }, { id, payload }) {
-      const { prevDataPath, file, hyperLink, isCenterImage, locations, ignoreLocations, name, data2Info, platformInfo } = payload
+    updateImageById({ getters, commit, dispatch }, { id, payload }) {
+      const { prevDataPath, file, hyperLink, isCenterImage, locations, ignoreLocations, name, data2Info, platformInfo, isHyperLinkVideo, videoHyperLink } = payload
       return new Promise(async (resolve, reject) => {
         try {
           let data2 = null
@@ -237,7 +290,7 @@ export default new Vuex.Store({
           } else if (data2Info.action === 'application') {
             data2 = { component: data2Info.applicationEmbedName, isEmbed: true }
           }
-          
+
           // format locations
           const formattedLocations = locations.map(location => {
             return {
@@ -251,26 +304,30 @@ export default new Vuex.Store({
             }
           })
 
-          let body = { hyperLink, isCenterImage, locations: formattedLocations, ignoreLocations, name, data2 }
-          if (file) {
-            const uploadResponse = await dispatch('uploadImage', file)
-            const data = IMAGE_BASE_URL + uploadResponse.name
-            body.data = data
-            await dispatch('deleteImageByPath', prevDataPath)
+          let body = { hyperLink, isCenterImage, locations: formattedLocations, ignoreLocations, name, data2, isHyperLinkVideo }
+          if (!isHyperLinkVideo || !videoHyperLink) {
+            if (file) {
+              const uploadResponse = await dispatch('uploadImage', file)
+              const data = IMAGE_BASE_URL + uploadResponse.name
+              body.data = data
+              await dispatch('deleteImageByPath', prevDataPath)
+            }
+          } else {
+            body.data = videoHyperLink
           }
 
-          const res = await fetch(api + '/edit/' + id, {
+          const res = await fetch(api + '/edit/' + id + '?image_collection_name=' + (getters.getPlatform?.images_collection_name || 'images'), {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json'
             },
             body: JSON.stringify(body)
           })
-          
+
           const platformRes = await dispatch('updatePlatformInfo', platformInfo)
           if (!platformRes.ok) resolve(platformRes)
           else commit('setPlatform', platformRes.platform)
-          
+
           const json = await res.json()
           resolve(json)
         } catch (e) {
@@ -278,7 +335,19 @@ export default new Vuex.Store({
         }
       })
     },
-    updatePlatformInfo({ }, { domain, isMainImageForDomain, image_id}) {
+    updatePlatformInfo({ getters, commit }, { domain, isMainImageForDomain, image_id, name, images_collection_name }) {
+      let body = {
+        domain
+      }
+      if (image_id) {
+        body = { ...body, image_id, isMainImageForDomain }
+      }
+      if (name) {
+        body = { ...body, name }
+      }
+      if (images_collection_name) {
+        body = { ...body, images_collection_name }
+      }
       return new Promise(async (resolve, reject) => {
         try {
           const res = await fetch(api + `/platform`, {
@@ -286,9 +355,10 @@ export default new Vuex.Store({
             headers: {
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ domain, image_id, isMainImageForDomain })
+            body: JSON.stringify(body)
           })
           const json = await res.json()
+          commit('setPlatform', json.platform)
           resolve(json)
         } catch (e) {
           reject(e)

@@ -1,6 +1,7 @@
 import { mapActions, mapGetters } from "vuex"
 import SimpleDropdown from '@/components/dropdowns/simple-dropdown'
 import APPLICATION_NAMES from '@/utils/applicationNames.js'
+import isDataVideo from '@/utils/isDataVideoLogic.js'
 
 export default {
   name: 'edit',
@@ -24,13 +25,17 @@ export default {
       ignoreLocations: false,
       searchText: '',
       searchResults: [],
-      isSearching: false
+      isSearching: false,
+      outerClickThruCount: 0,
+      centerClickThruCount: 0,
+      isHyperLinkVideo: false,
+      videoHyperLink: ''
     }
   },
   computed: {
     ...mapGetters(['getIsLoggedIntoEditor', 'getPlatform']),
     canSubmit() {
-      return Boolean(this.hyperLink)
+      return Boolean(this.hyperLink || this.applicationEmbedName || this.iframeLink)
     },
     domain() {
       return window.location.origin
@@ -41,37 +46,30 @@ export default {
   },
   async created() {
     if (!this.getIsLoggedIntoEditor) this.$router.push('/editor')
-    const res = await this.fetchImageById(this.$route.params.id)
-    this.dataLink = res.data
-    this.name = res.name
-    this.hyperLink = res.hyperLink
-    this.locations = res.locations
-    this.ignoreLocations = res.ignoreLocations
-    if (res.hyperLink && !res.data2) {
-      this.action = 'hyperLink'
-    } else if (res.hyperLink && !res.data2.isWidget && !res.data2.isEmbed) {
-      this.action = 'image'
-      this.dataLink = res.data2
-    } else if (res.data2.isWidget) {
-      this.action = 'iframe'
-      this.iframeLink = res.data2.data
-    } else if (res.data2.isEmbed) {
-      this.action = 'application'
-      this.applicationEmbedName = res.data2.component
-    } else {
-      this.action = null
-    }
-
-    this.isMainImageForDomain = (this.getPlatform && this.getPlatform.image_id === this.$route.params.id)
+    await this.setupData()
   },
   methods: {
     ...mapActions(['loginToEditor', 'fetchImageById', 'updateImageById', 'deleteImageById', 'googleMapsSearch']),
+    isDataVideo,
+    mapYoutubeUrl(url) {
+      const splits = url.split('v=')
+      const id = splits[splits.length - 1]
+
+      return 'https://www.youtube.com/embed/' + id
+    },
     async edit() {
       this.isLoading = true
+
+      if (this.isHyperLinkVideo) {
+        this.videoHyperLink = this.mapYoutubeUrl(this.videoHyperLink)
+      }
+
       const res = await this.updateImageById({
         id: this.$route.params.id,
         payload: {
           file: this.$refs.inputFile && this.$refs.inputFile.files[0] ? this.$refs.inputFile.files[0] : null,
+          isHyperLinkVideo: this.isHyperLinkVideo,
+          videoHyperLink: this.videoHyperLink,
           prevDataPath: this.dataLink,
           hyperLink: this.hyperLink,
           isCenterImage: this.isCenterImage,
@@ -92,10 +90,14 @@ export default {
           }
         }
       })
-      this.res = res
-      this.dataLink = res.image.data
-      this.$refs.inputFile.value = null
-      this.hyperLink = res.image.hyperLink
+      this.res = res.image
+      if (this.isHyperLinkVideo) {
+        this.dataLink = res.data
+      } else {
+        this.dataLink = res.data
+        if (this.$refs.inputFile) this.$refs.inputFile.value = null
+      }
+      this.hyperLink = res.hyperLink
       this.isLoading = false
     },
     async deleteImage() {
@@ -135,6 +137,43 @@ export default {
         location.radius = location.radius * 1609.34 / 1000 // convert mi to meters then meters to km
       }
       location.radiusUnit = unit
+    },
+    async setupData() {
+      const res = await this.fetchImageById(this.$route.params.id)
+      if (!res) return
+      this.res = res
+      this.dataLink = res.data
+      this.isHyperLinkVideo = res.isHyperLinkVideo
+      if (this.isHyperLinkVideo) this.videoHyperLink = this.dataLink
+      this.name = res.name
+      this.hyperLink = res.hyperLink
+      this.locations = res.locations
+      this.ignoreLocations = res.ignoreLocations
+      this.outerClickThruCount = res.outerClickThruCount ?? 0
+      this.centerClickThruCount = res.centerClickThruCount ?? 0
+      if (res.hyperLink && !res.data2) {
+        this.action = 'hyperLink'
+      } else if (res.hyperLink && !res.data2.isWidget && !res.data2.isEmbed) {
+        this.action = 'image'
+        this.dataLink = res.data2
+      } else if (res.data2.isWidget) {
+        this.action = 'iframe'
+        this.iframeLink = res.data2.data
+      } else if (res.data2.isEmbed) {
+        this.action = 'application'
+        this.applicationEmbedName = res.data2.component
+      } else {
+        this.action = null
+      }
+
+      this.isMainImageForDomain = (this.getPlatform && this.getPlatform.image_id === this.$route.params.id)
+    }
+  },
+  watch: {
+    async getPlatform() {
+      if (this.getPlatform) {
+        await this.setupData()
+      }
     }
   }
 }

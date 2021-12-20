@@ -1,0 +1,21 @@
+{
+  "name": "wand-platform-demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "f": "cd ./public && npm run serve",
+    "b": "cd ./server && npm run dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Devin-Harris/wand-platform-demo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Devin-Harris/wand-platform-demo/issues"
+  },
+  "homepage": "https://github.com/Devin-Harris/wand-platform-demo#readme"
+}

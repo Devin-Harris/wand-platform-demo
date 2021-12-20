@@ -45,6 +45,19 @@
     text-align: center;
     margin: 1rem 0;
     font-family: sans-serif;
+    .loading {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 500%;
+    }
     h1 {
       margin: 1rem 0;
     }
@@ -80,7 +93,7 @@
             height: 10rem;
             width: 10rem;
             position: relative;
-            img {
+            img, video {
               height: 100%;
               width: 100%;
               object-fit: cover;
@@ -103,6 +116,77 @@
               }
             }
           }
+        }
+        .no-images {
+          padding: 1rem 2.5rem;
+          width: 100%;
+          p {
+            width: inherit;
+            text-align: center;
+          }
+        }
+      }
+
+      .platform {
+        margin: 1rem 2rem;
+        border: 1px solid rgb(211, 211, 211);
+        border-radius: .25rem;
+        h6 {
+          padding: .5rem 0;
+          color: Black;
+          background-color: rgb(235, 235, 235);
+          text-align: center;
+          font-size: 1.5rem;
+          margin-bottom: .5rem;
+          i {
+            font-size: 1rem;
+            cursor: pointer;
+            transition: .3s;
+            &:hover {
+              color: rgb(0, 110, 255);
+            }
+          }
+        }
+        &-container {
+          padding: 1rem 2rem;
+          text-align: left;
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          grid-gap: 1rem;
+          .platform-field {
+            .image-container {
+              background-color: rgb(211, 211, 211);
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              cursor: pointer;
+              transition: .3s;
+              &:hover {
+                background-color: rgb(235, 235, 235);
+              }
+              img, video {
+                height: 5rem;
+                width: auto;
+                object-fit: cover;
+              }
+            }
+            input, .simple-dropdown_label {
+              font-size: .85rem;
+              padding: .5rem 1rem;
+              border-radius: .25rem;
+              outline: none;
+              border: 1px solid rgb(211, 211, 211);
+            }
+            input, p, .simple-dropdown_label {
+              margin-top: .25rem;
+            }
+            .simple-dropdown_label p {
+              margin-top: 0;
+            }
+          }
+        }
+        button {
+          margin-bottom: 1.25rem;
         }
       }
     }

@@ -25,13 +25,18 @@ export default {
       ignoreLocations: false,
       searchText: '',
       searchResults: [],
-      isSearching: false
+      isSearching: false,
+      isHyperLinkVideo: false,
+      videoHyperLink: ''
     }
   },
   computed: {
     ...mapGetters(['getIsLoggedIntoEditor']),
     canSubmit() {
-      return Boolean(this.hasFile && (this.hyperLink || (this.iframeLink || this.applicationEmbedName)))
+      return Boolean(
+        (this.hasFile || (this.isHyperLinkVideo && this.videoHyperLink)) &&
+        (this.hyperLink || (this.iframeLink || this.applicationEmbedName))
+      )
     },
     domain() {
       return window.location.origin
@@ -45,11 +50,24 @@ export default {
   },
   methods: {
     ...mapActions(['loginToEditor', 'addImage', 'googleMapsSearch']),
+    mapYoutubeUrl(url) {
+      const splits = url.split('v=')
+      const id = splits[splits.length - 1]
+
+      return 'https://www.youtube.com/embed/' + id
+    },
     async add() {
       this.isLoading = true
+
+      if (this.isHyperLinkVideo) {
+        this.videoHyperLink = this.mapYoutubeUrl(this.videoHyperLink)
+      }
+
       const res = await this.addImage({
         file: this.$refs.inputFile && this.$refs.inputFile.files[0] ? this.$refs.inputFile.files[0] : null,
         hyperLink: this.hyperLink,
+        isHyperLinkVideo: this.isHyperLinkVideo,
+        videoHyperLink: this.videoHyperLink,
         isCenterImage: this.isCenterImage,
         ignoreLocations: this.ignoreLocations,
         locations: this.locations,
@@ -67,7 +85,7 @@ export default {
         }
       })
       this.res = res
-      this.$refs.inputFile.value = null
+      if (this.$refs.inputFile) this.$refs.inputFile.value = null
       this.hyperLink = ''
       this.isLoading = false
     },

@@ -34,7 +34,7 @@
 
     <div v-if="locationInput" class="embed-chooser">
       <span v-for="i in 3" :key="'embedRadio-'+ i">
-        <label @click="setLoadedEmbed(i)" for="radio">Embed {{i}}</label>
+        <label @click="setLoadedEmbed(i)" for="radio">{{ i === 1 ? 'Current' : i === 2 ? 'Conditions' : 'Forecast' }}</label>
         <input type="radio" name="radio" id="embedRadio" @change="setLoadedEmbed(i)" :checked="loadedEmbed === i">
       </span>
     </div>

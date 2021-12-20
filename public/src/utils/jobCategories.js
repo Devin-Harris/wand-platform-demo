@@ -1,0 +1,20 @@
+export default {
+  'admin': { label: 'Admin', color: '#ffc000' },
+  'business': { label: 'Business', color: '#ed7d31' },
+  'education': { label: 'Education', color: '#c55b10' },
+  'finance': { label: 'Finance', color: '#92d14f' },
+  'food': { label: 'Food Service', color: '#8fabdd'  },
+  'labor': { label: 'labor', color: '#4473c4' },
+  'marketing': { label: 'marketing', color: '#2f5596' },
+  'media': { label: 'media', color: '#7030a0' },
+  'medical': { label: 'medical', color: '#ff0066' },
+  'misc': { label: 'misc', color: '#00af50' },
+  'odd': { label: 'Odd Jobs', color: '#538234'  },
+  'office': { label: 'office', color: '#bf9000' },
+  'retail': { label: 'retail', color: '#01b0f1' },
+  'sales': { label: 'sales', color: '#8397b0' },
+  'services': { label: 'services', color: '#c55b10' },
+  'tech': { label: 'tech', color: '#203864' },
+  'trades': { label: 'trades', color: '#ff0066' },
+  'transport': { label: 'transport', color: '#6f319f' }
+}

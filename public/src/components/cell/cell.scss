@@ -5,6 +5,7 @@
   }
   position: relative;
   .overlay {
+    pointer-events: none;
     content: '';
     position: absolute;
     top: 0;
@@ -21,7 +22,7 @@
       background: rgba(0, 0, 0, .5);
     }
   }
-  img, iframe {
+  img, video, iframe {
     border: 0;
     outline: 0;
     width: inherit;

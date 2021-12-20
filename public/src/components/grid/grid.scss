@@ -1,8 +1,35 @@
-.grid {
-  background-color: black;
-  width: 100vw;
-  height: 100vh;
+.grid-container {
   position: relative;
-  .main-cell {
+  .loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 500%;
+  }
+  
+  .grid {
+    background-color: black;
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    .main-cell {
+    }
+  }
+  
+  .grid-bottom-right-text {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding: .5rem 1.5rem;
+    background-color: white;
+    z-index: 10;
+    font-size: .8rem;
   }
 }

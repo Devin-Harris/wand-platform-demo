@@ -41,72 +41,96 @@ export default {
       centerCellInterval: null,
       outerCellInterval: null,
       revolutions: 0,
-      maxRevolutionCount: 1
+      maxRevolutionCount: 1,
+      loading: false,
+      outerCellClickShouldOpenExternalLink: false
     }
   },
   computed: {
     ...mapGetters(['getPlatform']),
     imagesNotInUse() {
-      if (!this.rimCells || this.rimCells.length == 0 || this.rimCells.map(c => c.data).filter(c => c !== null).length == 0) return [...this.RIM_IMAGES, ...this.CENTER_IMAGES]
-      return [...this.RIM_IMAGES, ...this.CENTER_IMAGES].filter(image => {
+      if (!this.rimCells || this.rimCells.length == 0 || this.rimCells.map(c => c.data).filter(c => c !== null).length == 0) return this.RIM_IMAGES
+      return this.RIM_IMAGES.filter(image => {
         return !this.rimCells.some(cell => cell.data === image.data || cell.data === image.data2) && (this.centerCell.data !== image.data)
       })
     }
-  },
-  async mounted() {
-    this.RIM_IMAGES = await this.fetchRimImages()
-    this.CENTER_IMAGES = await this.fetchCenterImages()
-    if (!this.RIM_IMAGES || !this.CENTER_IMAGES) return
-    this.rimCount = Object.keys(this.rimCellPositions).length
-    window.addEventListener('resize', this.resizeGrid)
-
-    this.resizeGrid()
-    if (this.usingLocalData || this.getPlatform === null) {
-      this.randomizeCenterCell()
-    } else {
-      if (this.getPlatform !== null) {
-        const foundImage = this.CENTER_IMAGES.find(image => image._id === this.getPlatform.image_id)
-        if (foundImage) this.centerCell = foundImage
-        else this.randomizeCenterCell()
-      }
-    }
-    this.clearRimCells()
-    this.randomizeGrid()
-
-    this.startMovingGrid()
-    this.startCellInterval()
   },
   destroyed() {
     clearInterval(this.outerCellInterval)
     clearInterval(this.centerCellInterval)
     window.removeEventListener('resize', this.resizeGrid)
   },
+  async mounted() {
+    if (this.getPlatform) {
+      await this.setupGrid()
+    }
+  },
   methods: {
-    ...mapActions(['fetchRimImages', 'fetchCenterImages']),
-    outerCellClicked(cell, index) {
-      this.clickToClickThroughCount = 0
-      this.centerCell = { ...cell }
-      this.stopCellInterval()
+    ...mapActions(['fetchRimImages', 'fetchCenterImages', 'incrementOuterImageClickThruCountById', 'incrementCenterImageClickThruCountById']),
+    async setupGrid() {
+      this.loading = true
+      this.RIM_IMAGES = await this.fetchRimImages()
+      this.CENTER_IMAGES = await this.fetchCenterImages()
+      this.loading = false
+      if (!this.RIM_IMAGES || !this.CENTER_IMAGES) return
+      this.rimCount = Object.keys(this.rimCellPositions).length
+      window.addEventListener('resize', this.resizeGrid)
+
+      if (this.usingLocalData || this.getPlatform === null) {
+        this.randomizeCenterCell()
+      } else {
+        if (this.getPlatform !== null) {
+          const foundImage = this.CENTER_IMAGES.find(image => image._id === this.getPlatform.image_id)
+          if (foundImage) this.centerCell = foundImage
+          else this.randomizeCenterCell()
+        }
+      }
+      this.clearRimCells()
+      this.randomizeGrid()
+
+      this.startMovingGrid()
       this.startCellInterval()
-      const randomImage = this.getRandomNotUsedImage()
-      this.rimCells[index].data = randomImage.data
-      this.rimCells[index].hyperLink = randomImage.hyperLink
+      setTimeout(() => {
+        this.resizeGrid()
+      }, 1)
     },
-    mainCellClick() {
-      if (this.centerCell.data2) {
+    async outerCellClicked(cell, index) {
+      this.clickToClickThroughCount = 0
+      if (cell._id !== this.centerCell._id) await this.incrementOuterImageClickThruCountById(cell._id)
+      if (this.outerCellClickShouldOpenExternalLink) this.cellClick(cell)
+      else {
+        this.centerCell = { ...cell }
+        this.stopCellInterval()
+        this.startCellInterval()
+        const randomImage = this.getRandomNotUsedImage()
+        this.rimCells[index].data = randomImage.data
+        this.rimCells[index].hyperLink = randomImage.hyperLink
+      }
+    },
+    cellClick(cell) {
+      if (cell.data2 || cell.isHyperLinkVideo) {
         if (this.clickToClickThroughCount > 0) {
-          if (this.centerCell.data.isEmbed || this.centerCell.data.isWidget) return
-          window.open(this.centerCell.hyperLink)
+          if (cell.data.isEmbed || cell.data.isWidget) return
+          window.open(cell.hyperLink)
         } else {
-          this.centerCell.data = this.centerCell.data2
-          if (this.centerCell.data.isEmbed) {
+          if (!cell.isHyperLinkVideo) cell.data = cell.data2
+          if (cell.data && cell.data.isEmbed || cell.isHyperLinkVideo) {
             this.stopCellInterval()
           }
           this.clickToClickThroughCount += 1
         }
-      } else if (this.centerCell.hyperLink) {
-        window.open(this.centerCell.hyperLink)
+      } else if (cell.hyperLink) {
+        window.open(cell.hyperLink)
       }
+    },
+    async mainCellClick(cell) {
+      let shouldIncCenterClickThru = !(
+        (cell.data2 || cell.isHyperLinkVideo) &&
+        this.clickToClickThroughCount > 0 &&
+        (cell.data && (cell.data.isEmbed || cell.data.isWidget))
+      )
+      if (shouldIncCenterClickThru) await this.incrementCenterImageClickThruCountById(this.centerCell._id)
+      this.cellClick(this.centerCell)
     },
     clearRimCells() {
       let arr = []
@@ -121,7 +145,7 @@ export default {
     },
     getRandomCenterCellImage() {
       let possibleCenterImages = [...this.CENTER_IMAGES.filter(image => this.rimCells.some(cell => image.data === cell.data))]
-      if (!this.rimCells || this.rimCells.length === 0) possibleCenterImages = [...this.CENTER_IMAGES]
+      if (!this.rimCells || this.rimCells.length === 0 || !possibleCenterImages || possibleCenterImages.length === 0) possibleCenterImages = [...this.CENTER_IMAGES]
       let randomIdx = Math.floor(Math.random() * possibleCenterImages.length)
       return possibleCenterImages[randomIdx]
     },
@@ -166,10 +190,10 @@ export default {
         this.rimCells[currIndex].position = this.rimCellPositions[nextPositionIndex]
         if (nextPositionIndex === 17) {
           const randomImage = this.getRandomNotUsedImage()
-          this.rimCells[currIndex].data = randomImage.data
-          if (randomImage.data2) this.rimCells[currIndex].data2 = randomImage.data2
-          this.rimCells[currIndex].hyperLink = randomImage.hyperLink
-          this.rimCells[currIndex].name = randomImage.name
+          this.rimCells[currIndex].data = randomImage?.data
+          if (randomImage && randomImage.data2) this.rimCells[currIndex].data2 = randomImage.data2
+          this.rimCells[currIndex].hyperLink = randomImage?.hyperLink
+          this.rimCells[currIndex].name = randomImage?.name
         }
       }
       this.rimCells = [...this.rimCells]
@@ -191,7 +215,8 @@ export default {
       this.centerCell = this.usingLocalData ? { ...this.getRandomCenterCellWidget(), startingIndex: null } : { ...this.getRandomCenterCellImage(), startingIndex: null }
     },
     resizeGrid() {
-      const grid = document.querySelector('.grid')
+      const grid = this.$refs.grid
+      if (!grid) return
       const bounds = grid.getBoundingClientRect()
       this.rimCellWidth = bounds.width / 5
       this.rimCellHeight = bounds.height / 5
@@ -219,6 +244,12 @@ export default {
   watch: {
     revolutions() {
       if (this.revolutions === this.maxRevolutionCount) this.stopMovingGrid()
+    },
+    async getPlatform() {
+      if (this.getPlatform) {
+        await this.setupGrid()
+        this.resizeGrid()
+      }
     }
   }
 }

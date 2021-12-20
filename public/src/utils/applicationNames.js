@@ -1,4 +1,5 @@
 export default [
   'translator',
-  'weather'
+  'weather',
+  'jobs'
 ]

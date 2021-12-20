@@ -2,15 +2,8 @@ import { mapActions } from "vuex";
 
 export default {
   name: 'app',
-  async mounted() {
-    const {platform} = await this.fetchPlatform()
-    console.log(platform)
-    if (platform.google_meta_content_id) {
-      const meta = document.createElement('meta')
-      meta.name = 'google-site-verification'
-      meta.content = platform.google_meta_content_id
-      document.head.appendChild(meta)
-    }
+  async created() {
+    await this.fetchPlatform()
   },
   methods: {
     ...mapActions(['fetchPlatform']),

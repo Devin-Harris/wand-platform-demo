@@ -11,7 +11,7 @@
       <div class="output">
         <google-dropdown :selectedItem="outputLang.name" :items="availableLangNames"  @item-selected="selectOutputLang($event)" :isDropdownGrid="true" :keyBase="'output'" />
         <div disabled name="outputPhrase" id="outputPhrase" cols="30" rows="10">
-          <div v-if="loadingOutput" class="loading">
+          <div v-if="loadingOutput" class="loading-output">
             <i class="fas fa-spinner fa-spin"></i>
             <p>Loading</p>
           </div>
@@ -23,4 +23,4 @@
 </template>
 
 <script src="./translator.js"></script>
-<style src="./translator.scss" lang="scss"></style>
+<style src="./translator.scss" lang="scss" scoped></style>
