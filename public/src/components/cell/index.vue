@@ -2,7 +2,7 @@
   <div
     v-if="cell && cell.data"
     class="cell"
-    @click="$emit('cell-clicked')"
+    @click="cellClick()"
     :class="{ canClick: !cell.data.isWidget && !cell.data.isEmbed }"
   >
     <div v-if="!cell.data.isWidget && !cell.data.isEmbed" class="overlay">
@@ -17,11 +17,11 @@
       v-else-if="cell.isHyperLinkVideo"
       :style="{ height: '100%', width: '100%' }"
     >
-      <embed
-        :src="cell.data"
+      <div
+        ref="cellYoutubeEmbed"
+        id="cellYoutubeEmbed"
         height="100%"
         width="100%"
-        @click="console.log('hi')"
       />
     </div>
     <video v-else-if="isDataVideo(cell.data)" controls autoplay muted>

@@ -54,7 +54,7 @@ export default {
       const splits = url.split('v=')
       const id = splits[splits.length - 1]
 
-      return 'https://www.youtube.com/embed/' + id
+      return 'https://www.youtube.com/embed/' + id + '?enablejsapi=1'
     },
     async add() {
       this.isLoading = true

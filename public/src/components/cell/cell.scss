@@ -1,11 +1,13 @@
 .cell {
   // transition: 1s;
+  .no-pointer {
+    pointer-events: none;
+  }
   &.canClick {
     cursor: pointer;
   }
   position: relative;
   .overlay {
-    pointer-events: none;
     content: '';
     position: absolute;
     top: 0;
@@ -13,6 +15,7 @@
     height: 100%;
     width: 100%;
     transition: .3s;
+    z-index: 5;
     p {
       opacity: 0;
     }

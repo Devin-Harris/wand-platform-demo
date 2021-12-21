@@ -26,7 +26,7 @@
       <cell
         v-if="centerCell"
         class="main-cell"
-        :cell="centerCell"
+        :cell="{ ...centerCell, clickToClickThroughCount }"
         :style="{
           width: 3 * rimCellWidth - 24 + 'px',
           height: 3 * rimCellHeight - 24 + 'px',
