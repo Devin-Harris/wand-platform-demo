@@ -66,7 +66,7 @@ export default {
       const res = await this.addImage({
         file: this.$refs.inputFile && this.$refs.inputFile.files[0] ? this.$refs.inputFile.files[0] : null,
         hyperLink: this.hyperLink,
-        isHyperLinkVideo: this.isHyperLinkVideo,
+        isHyperLinkVideo: this.action === 'youtube',
         videoHyperLink: this.videoHyperLink,
         isCenterImage: this.isCenterImage,
         ignoreLocations: this.ignoreLocations,

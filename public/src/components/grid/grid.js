@@ -81,12 +81,16 @@ export default {
       } else {
         if (this.getPlatform !== null) {
           const foundImage = this.CENTER_IMAGES.find(image => image._id === this.getPlatform.image_id)
-          if (foundImage) this.centerCell = foundImage
+          if (foundImage) this.centerCell = { ...foundImage, clickToClickThroughCount: this.clickToClickThroughCount, isMainCell: true }
           else this.randomizeCenterCell()
         }
       }
       this.clearRimCells()
       this.randomizeGrid()
+
+      for (let i = 0; i < this.rimCount; i++) {
+        this.moveGridClockwise()
+      }
 
       this.startMovingGrid()
       this.startCellInterval()
@@ -99,25 +103,28 @@ export default {
       if (cell._id !== this.centerCell._id) await this.incrementOuterImageClickThruCountById(cell._id)
       if (this.outerCellClickShouldOpenExternalLink) this.cellClick(cell)
       else {
-        this.centerCell = { ...cell }
+        this.centerCell = { ...cell, clickToClickThroughCount: this.clickToClickThroughCount, isMainCell: true }
         this.stopCellInterval()
         this.startCellInterval()
         const randomImage = this.getRandomNotUsedImage()
-        this.rimCells[index].data = randomImage.data
-        this.rimCells[index].hyperLink = randomImage.hyperLink
+        if (randomImage) {
+          this.rimCells[index].data = randomImage.data
+          this.rimCells[index].hyperLink = randomImage.hyperLink
+        }
       }
     },
     cellClick(cell) {
       if (cell.data2 || cell.isHyperLinkVideo) {
         if (this.clickToClickThroughCount > 0) {
-          if (cell.data.isEmbed || cell.data.isWidget) return
+          if (cell.data && (cell.data.isEmbed || cell.data.isWidget)) return
           window.open(cell.hyperLink)
         } else {
           if (!cell.isHyperLinkVideo) cell.data = cell.data2
-          if (cell.data && cell.data.isEmbed || cell.isHyperLinkVideo) {
+          if ((cell.data && cell.data.isEmbed) || cell.isHyperLinkVideo) {
             this.stopCellInterval()
           }
-          this.clickToClickThroughCount += 1
+          this.clickToClickThroughCount = this.clickToClickThroughCount + 1
+          this.centerCell.clickToClickThroughCount = this.clickToClickThroughCount
         }
       } else if (cell.hyperLink) {
         window.open(cell.hyperLink)
@@ -131,6 +138,15 @@ export default {
       )
       if (shouldIncCenterClickThru) await this.incrementCenterImageClickThruCountById(this.centerCell._id)
       this.cellClick(this.centerCell)
+    },
+    handleYoutubeVideoEnd() {
+      if (this.centerCell.data) {
+        this.centerCell = {
+          ...this.centerCell,
+          isHyperLinkVideo: false
+        }
+      }
+      this.startCellInterval()
     },
     clearRimCells() {
       let arr = []
@@ -147,11 +163,11 @@ export default {
       let possibleCenterImages = [...this.CENTER_IMAGES.filter(image => this.rimCells.some(cell => image.data === cell.data))]
       if (!this.rimCells || this.rimCells.length === 0 || !possibleCenterImages || possibleCenterImages.length === 0) possibleCenterImages = [...this.CENTER_IMAGES]
       let randomIdx = Math.floor(Math.random() * possibleCenterImages.length)
-      return possibleCenterImages[randomIdx]
+      return { ...possibleCenterImages[randomIdx], clickToClickThroughCount: this.clickToClickThroughCount, isMainCell: true }
     },
     getRandomCenterCellWidget() {
       let randomIdx = Math.floor(Math.random() * Images.centerWidgets.length)
-      return Images.centerWidgets[randomIdx]
+      return { ...Images.centerWidgets[randomIdx], clickToClickThroughCount: this.clickToClickThroughCount, isMainCell: true }
     },
     isCellCorner(cell) {
       const { x, y } = cell.position
@@ -190,10 +206,9 @@ export default {
         this.rimCells[currIndex].position = this.rimCellPositions[nextPositionIndex]
         if (nextPositionIndex === 17) {
           const randomImage = this.getRandomNotUsedImage()
-          this.rimCells[currIndex].data = randomImage?.data
-          if (randomImage && randomImage.data2) this.rimCells[currIndex].data2 = randomImage.data2
-          this.rimCells[currIndex].hyperLink = randomImage?.hyperLink
-          this.rimCells[currIndex].name = randomImage?.name
+          if (randomImage) {
+            this.rimCells[currIndex] = { ...this.rimCells[currIndex], ...randomImage }
+          }
         }
       }
       this.rimCells = [...this.rimCells]

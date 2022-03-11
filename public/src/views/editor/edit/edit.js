@@ -52,8 +52,14 @@ export default {
     ...mapActions(['loginToEditor', 'fetchImageById', 'updateImageById', 'deleteImageById', 'googleMapsSearch']),
     isDataVideo,
     mapYoutubeUrl(url) {
-      const splits = url.split('v=')
-      const id = splits[splits.length - 1]
+      let splits = []
+      if (url.includes('https://www.youtube.com/embed/')) {
+        splits = url.split('embed/')
+      } else {
+        splits = url.split('v=')
+      }
+      let id = splits[splits.length - 1]
+      if (id.includes('?enablejsapi=1')) id = id.split('?enablejsapi=1')[0]
 
       return 'https://www.youtube.com/embed/' + id + '?enablejsapi=1'
     },
@@ -68,7 +74,8 @@ export default {
         id: this.$route.params.id,
         payload: {
           file: this.$refs.inputFile && this.$refs.inputFile.files[0] ? this.$refs.inputFile.files[0] : null,
-          isHyperLinkVideo: this.isHyperLinkVideo,
+          isHyperLinkVideo: this.action === 'youtube',
+          hasCoverImage: this.hasCoverImage,
           videoHyperLink: this.videoHyperLink,
           prevDataPath: this.dataLink,
           hyperLink: this.hyperLink,
@@ -91,12 +98,8 @@ export default {
         }
       })
       this.res = res.image
-      if (this.isHyperLinkVideo) {
-        this.dataLink = res.data
-      } else {
-        this.dataLink = res.data
-        if (this.$refs.inputFile) this.$refs.inputFile.value = null
-      }
+      this.dataLink = res.data
+      if (this.$refs.inputFile) this.$refs.inputFile.value = null
       this.hyperLink = res.hyperLink
       this.isLoading = false
     },
@@ -142,9 +145,8 @@ export default {
       const res = await this.fetchImageById(this.$route.params.id)
       if (!res) return
       this.res = res
-      this.dataLink = res.data
       this.isHyperLinkVideo = res.isHyperLinkVideo
-      if (this.isHyperLinkVideo) this.videoHyperLink = this.dataLink
+      this.dataLink = res.data
       this.name = res.name
       this.hyperLink = res.hyperLink
       this.locations = res.locations
@@ -153,6 +155,9 @@ export default {
       this.centerClickThruCount = res.centerClickThruCount ?? 0
       if (res.hyperLink && !res.data2) {
         this.action = 'hyperLink'
+      } else if (res.isHyperLinkVideo) {
+        this.action = 'youtube'
+        this.videoHyperLink = res.data2
       } else if (res.hyperLink && !res.data2.isWidget && !res.data2.isEmbed) {
         this.action = 'image'
         this.dataLink = res.data2

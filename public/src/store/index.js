@@ -36,6 +36,8 @@ export default new Vuex.Store({
             const uploadResponse = await dispatch('uploadImage', data2Info.file)
             const data = IMAGE_BASE_URL + uploadResponse.name
             data2 = data
+          } else if (data2Info.action === 'youtube') {
+            data2 = videoHyperLink
           } else if (data2Info.action === 'iframe') {
             data2 = { data: data2Info.iframeLink, isWidget: true }
           } else if (data2Info.action === 'application') {
@@ -60,8 +62,6 @@ export default new Vuex.Store({
             const uploadResponse = await dispatch('uploadImage', file)
             const data = IMAGE_BASE_URL + uploadResponse.name
             body.data = data
-          } else {
-            body.data = videoHyperLink
           }
 
           const res = await fetch(api + '/add?image_collection_name=' + (getters.getPlatform?.images_collection_name || 'images'), {
@@ -277,7 +277,7 @@ export default new Vuex.Store({
       })
     },
     updateImageById({ getters, commit, dispatch }, { id, payload }) {
-      const { prevDataPath, file, hyperLink, isCenterImage, locations, ignoreLocations, name, data2Info, platformInfo, isHyperLinkVideo, videoHyperLink } = payload
+      const { prevDataPath, file, hyperLink, isCenterImage, locations, ignoreLocations, name, data2Info, platformInfo, isHyperLinkVideo, videoHyperLink, hasCoverImage } = payload
       return new Promise(async (resolve, reject) => {
         try {
           let data2 = null
@@ -285,6 +285,10 @@ export default new Vuex.Store({
             const uploadResponse = await dispatch('uploadImage', data2Info.file)
             const data = IMAGE_BASE_URL + uploadResponse.name
             data2 = data
+          } else if (data2Info.action === 'hyperLink') {
+            data2 = data2Info.hyperLink
+          } else if (data2Info.action === 'youtube') {
+            data2 = videoHyperLink
           } else if (data2Info.action === 'iframe') {
             data2 = { data: data2Info.iframeLink, isWidget: true }
           } else if (data2Info.action === 'application') {
@@ -304,17 +308,14 @@ export default new Vuex.Store({
             }
           })
 
-          let body = { hyperLink, isCenterImage, locations: formattedLocations, ignoreLocations, name, data2, isHyperLinkVideo }
-          if (!isHyperLinkVideo || !videoHyperLink) {
-            if (file) {
-              const uploadResponse = await dispatch('uploadImage', file)
-              const data = IMAGE_BASE_URL + uploadResponse.name
-              body.data = data
-              await dispatch('deleteImageByPath', prevDataPath)
-            }
-          } else {
-            body.data = videoHyperLink
+          let body = { hyperLink, isCenterImage, locations: formattedLocations, ignoreLocations, name, data2, isHyperLinkVideo, hasCoverImage }
+          if (file) {
+            const uploadResponse = await dispatch('uploadImage', file)
+            const data = IMAGE_BASE_URL + uploadResponse.name
+            body.data = data
+            await dispatch('deleteImageByPath', prevDataPath)
           }
+
 
           const res = await fetch(api + '/edit/' + id + '?image_collection_name=' + (getters.getPlatform?.images_collection_name || 'images'), {
             method: 'PUT',

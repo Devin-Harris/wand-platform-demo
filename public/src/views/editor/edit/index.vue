@@ -4,37 +4,22 @@
     <p class="res" :class="{ success: res.ok }" v-if="res">{{ res.message }}</p>
     <button @click="$router.go(-1)">Back</button>
     <div class="content">
-      <div v-if="res && dataLink" class="input-container">
-        <div v-if="res.isHyperLinkVideo">
-          <embed :src="dataLink" height="100%" width="100%" />
-        </div>
-        <video v-else-if="isDataVideo(res)" controls autoplay muted>
+      <div v-if="res" class="input-container">
+        <video v-if="isDataVideo(res)" controls autoplay muted>
           <source :src="dataLink" />
           Your browser does not support the video tag.
         </video>
-        <img v-else :src="dataLink" alt="image" />
+        <img
+          v-else
+          :src="dataLink"
+          :alt="'unable to load image at ' + dataLink + ' address'"
+        />
 
         <div class="uploading-container">
-          <!-- Is hyperlink a video link -->
-          <div class="hyperlink-video-container">
-            <input
-              name="hyperlinkVideo"
-              type="checkbox"
-              v-model="isHyperLinkVideo"
-            />
-            <label
-              for="hyperlinkVideo"
-              @click="isHyperLinkVideo = !isHyperLinkVideo"
-              >Youtube video?</label
-            >
-          </div>
-
-          <div v-if="isHyperLinkVideo" class="hyperlink-video-upload">
-            <p>Paste the videos hyperlink here</p>
-            <input type="text" v-model="videoHyperLink" />
-          </div>
-          <div v-else-if="!isHyperLinkVideo" class="image-upload">
-            <p>Upload a new image here</p>
+          <div class="image-upload">
+            <p>
+              Upload a {{ action === "youtube" ? "cover" : "new" }} image here
+            </p>
             <input
               type="file"
               ref="inputFile"
@@ -151,6 +136,13 @@
           ></div>
           <div class="radio-button_text">Image</div>
         </div>
+        <div class="radio-button" @click.stop="setAction('youtube')">
+          <div
+            class="radio-button_circle"
+            :class="{ selected: action === 'youtube' }"
+          ></div>
+          <div class="radio-button_text">Youtube Video</div>
+        </div>
         <div class="radio-button" @click.stop="setAction('iframe')">
           <div
             class="radio-button_circle"
@@ -176,6 +168,12 @@
           class="input-container hyper_link"
         >
           <p>Paste the images site hyperlink here</p>
+          <input type="text" v-model="hyperLink" />
+        </div>
+        <div v-if="action === 'youtube'" class="input-container hyper_link">
+          <p>Paste the youtube video hyperlink here</p>
+          <input type="text" v-model="videoHyperLink" />
+          <p>Paste the on second click redirect hyperlink here</p>
           <input type="text" v-model="hyperLink" />
         </div>
         <div v-if="action === 'iframe'" class="input-container iframe">

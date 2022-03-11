@@ -1,0 +1,107 @@
+$buttonColor: #00523f;
+$buttonColorLight: lighten($buttonColor, 5);
+
+.home {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  margin: 5rem auto;
+  .background-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    video {
+      object-fit: cover;
+      width: 100vw;
+      height: 100vh;
+    }
+    &:after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.767);
+    }
+  }
+
+  .display-contact-form-btn {
+    position: fixed;
+    top: 80%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 15;
+    .btn-container {
+      outline: 0;
+      border: 0;
+      border-radius: .25rem;
+      background-color: $buttonColor;
+      padding: 1rem;
+      color: white;
+      font-size: 1.25rem;
+      cursor: pointer;
+      transition: .3s;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: .3s;
+      position: relative;
+      i {
+      }
+      p {
+        margin-left: .5rem;
+      }
+      &:hover {
+        background-color: $buttonColorLight;
+      }
+    }
+  }
+
+  .contact-form-container {
+    z-index: 5;
+    opacity: 0;
+    display: none;
+    transition: .3s;
+    pointer-events: none;
+    &.shown {
+      display: block;
+      pointer-events: all;
+      opacity: 1;
+    }
+  }
+}
+
+.pulse:before,
+.pulse:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: $buttonColorLight;
+  border-radius: .25rem;
+  animation: pulse 4s ease-in-out infinite;
+  z-index: 0;
+}
+
+.pulse:after {
+  animation-delay: 2s;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    border-radius: .25rem;
+    opacity: .75;
+  }
+  
+  100% {
+    transform: scaleX(1.15) scaleY(1.75);
+    opacity: 0;
+  }
+}

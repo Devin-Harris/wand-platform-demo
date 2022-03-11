@@ -2,5 +2,6 @@ export default [
   'images',
   'jobs',
   'demos',
-  'dealerships'
+  'dealerships',
+  'tests'
 ]

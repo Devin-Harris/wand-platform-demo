@@ -38,11 +38,12 @@
                   $router.push(`/editor/edit/${image._id}?isCenterImage=true`)
                 "
               >
-                <div v-if="image.isHyperLinkVideo">
-                  <embed :src="image.data" height="100%" width="100%" />
-                </div>
-                <video v-else-if="isDataVideo(image)" :src="image.data" />
-                <img v-else :src="image.data" alt="image" />
+                <video v-if="isDataVideo(image)" :src="image.data" />
+                <img
+                  v-else
+                  :src="image.data"
+                  :alt="'unable to load image at ' + image.data + ' address'"
+                />
               </div>
             </div>
             <div v-if="CENTER_IMAGES.length === 0" class="no-images">
@@ -67,7 +68,11 @@
                 "
               >
                 <video v-if="isDataVideo(image)" :src="image.data" />
-                <img v-else :src="image.data" alt="image" />
+                <img
+                  v-else
+                  :src="image.data"
+                  :alt="'unable to load image at ' + image.data + ' address'"
+                />
               </div>
             </div>
             <div v-if="RIM_IMAGES.length === 0" class="no-images">

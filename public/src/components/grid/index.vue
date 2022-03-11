@@ -6,7 +6,7 @@
     <div v-else class="grid" ref="grid">
       <cell
         v-for="(cell, index) in rimCells"
-        :key="cell.data + '-' + index"
+        :key="cell._id + '-' + index"
         :cell="cell"
         :style="{
           width: rimCellWidth + 'px',
@@ -26,7 +26,8 @@
       <cell
         v-if="centerCell"
         class="main-cell"
-        :cell="{ ...centerCell, clickToClickThroughCount }"
+        :key="centerCell._id + '-main-cell'"
+        :cell="centerCell"
         :style="{
           width: 3 * rimCellWidth - 24 + 'px',
           height: 3 * rimCellHeight - 24 + 'px',
@@ -35,6 +36,7 @@
           left: rimCellWidth + 12 + 'px',
         }"
         @cell-clicked="mainCellClick(centerCell)"
+        @youtube-video-ended="handleYoutubeVideoEnd()"
       ></cell>
     </div>
     <div class="grid-bottom-right-text">

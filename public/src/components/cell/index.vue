@@ -1,25 +1,37 @@
 <template>
   <div
-    v-if="cell && cell.data"
+    v-if="cell && (cell.data || cell.videoHyperLink)"
     class="cell"
     @click="cellClick()"
-    :class="{ canClick: !cell.data.isWidget && !cell.data.isEmbed }"
+    :class="{
+      canClick: !cell.data || (!cell.data.isWidget && !cell.data.isEmbed),
+    }"
   >
-    <div v-if="!cell.data.isWidget && !cell.data.isEmbed" class="overlay">
+    <div
+      v-if="!cell.data || (!cell.data.isWidget && !cell.data.isEmbed)"
+      class="overlay"
+    >
       <p>{{ cell.name }}</p>
     </div>
-    <iframe v-if="cell.data.isWidget" :src="cell.data.data"></iframe>
+    <iframe
+      v-if="cell.data && cell.data.isWidget"
+      :src="cell.data.data"
+    ></iframe>
     <component
-      v-else-if="cell.data.isEmbed"
+      v-else-if="cell.data && cell.data.isEmbed"
       :is="cell.data.component"
     ></component>
     <div
-      v-else-if="cell.isHyperLinkVideo"
-      :style="{ height: '100%', width: '100%' }"
+      v-else-if="
+        cell.isHyperLinkVideo &&
+        cell.isMainCell &&
+        cell.clickToClickThroughCount <= 1
+      "
+      :style="{ height: 'calc(100% - 1px)', width: 'calc(100% - 1px)' }"
     >
       <div
         ref="cellYoutubeEmbed"
-        id="cellYoutubeEmbed"
+        :id="'cellYoutubeEmbed' + cell._id"
         height="100%"
         width="100%"
       />
@@ -28,7 +40,11 @@
       <source :src="cell.data" />
       Your browser does not support the video tag.
     </video>
-    <img v-else :src="cell.data" alt="image" />
+    <img
+      v-else
+      :src="cell.data"
+      :alt="'unable to load image at ' + cell.data + ' address'"
+    />
   </div>
 </template>
 
