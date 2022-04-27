@@ -1,20 +1,20 @@
 .editor {
   button {
     cursor: pointer;
-    margin: .5rem 0;
-    border-radius: .25rem;
-    padding: .5rem .75rem;
+    margin: 0.5rem 0;
+    border-radius: 0.25rem;
+    padding: 0.5rem 0.75rem;
     border: none;
     outline: none;
     background-color: rgb(0, 110, 255);
     color: white;
-    transition: .3s;
+    transition: 0.3s;
     &.inactive {
       background-color: rgb(211, 211, 211);
       pointer-events: none;
     }
   }
-  
+
   .login {
     display: flex;
     flex-direction: column;
@@ -30,11 +30,11 @@
     }
     input {
       width: 100%;
-      margin: .5rem 0;
+      margin: 0.5rem 0;
       outline: none;
       border: 1px solid rgb(211, 211, 211);
-      border-radius: .25rem;
-      padding: .5rem .75rem;
+      border-radius: 0.25rem;
+      padding: 0.5rem 0.75rem;
       &.incorrect {
         border-color: rgb(252, 35, 20);
       }
@@ -66,21 +66,22 @@
       justify-content: center;
       align-items: center;
       flex-direction: column;
-      .centerImages, .rimImages {
+      .centerImages,
+      .rimImages {
         margin: 1rem 2rem;
         border: 1px solid rgb(211, 211, 211);
-        border-radius: .25rem;
+        border-radius: 0.25rem;
         h6 {
-          padding: .5rem 0;
+          padding: 0.5rem 0;
           color: Black;
           background-color: rgb(235, 235, 235);
           text-align: center;
           font-size: 1.5rem;
-          margin-bottom: .5rem;
+          margin-bottom: 0.5rem;
           i {
             font-size: 1rem;
             cursor: pointer;
-            transition: .3s;
+            transition: 0.3s;
             &:hover {
               color: rgb(0, 110, 255);
             }
@@ -93,13 +94,14 @@
             height: 10rem;
             width: 10rem;
             position: relative;
-            img, video {
+            img,
+            video {
               height: 100%;
               width: 100%;
               object-fit: cover;
             }
             &::after {
-              content: '';
+              content: "";
               position: absolute;
               top: 0;
               left: 0;
@@ -107,7 +109,7 @@
               width: 100%;
               background-color: rgba(0, 0, 0, 0.5);
               opacity: 0;
-              transition: .3s;
+              transition: 0.3s;
             }
             &:hover {
               &::after {
@@ -127,21 +129,22 @@
         }
       }
 
-      .platform {
+      .platform,
+      .collections {
         margin: 1rem 2rem;
         border: 1px solid rgb(211, 211, 211);
-        border-radius: .25rem;
+        border-radius: 0.25rem;
         h6 {
-          padding: .5rem 0;
+          padding: 0.5rem 0;
           color: Black;
           background-color: rgb(235, 235, 235);
           text-align: center;
           font-size: 1.5rem;
-          margin-bottom: .5rem;
+          margin-bottom: 0.5rem;
           i {
             font-size: 1rem;
             cursor: pointer;
-            transition: .3s;
+            transition: 0.3s;
             &:hover {
               color: rgb(0, 110, 255);
             }
@@ -153,40 +156,138 @@
           display: grid;
           grid-template-columns: repeat(2, 1fr);
           grid-gap: 1rem;
-          .platform-field {
+          .platform-field,
+          .collection-field {
             .image-container {
               background-color: rgb(211, 211, 211);
               display: flex;
               justify-content: center;
               align-items: center;
               cursor: pointer;
-              transition: .3s;
+              transition: 0.3s;
               &:hover {
                 background-color: rgb(235, 235, 235);
               }
-              img, video {
+              img,
+              video {
                 height: 5rem;
                 width: auto;
                 object-fit: cover;
               }
             }
-            input, .simple-dropdown_label {
-              font-size: .85rem;
-              padding: .5rem 1rem;
-              border-radius: .25rem;
+            input,
+            .simple-dropdown_label {
+              font-size: 0.85rem;
+              padding: 0.5rem 1rem;
+              border-radius: 0.25rem;
               outline: none;
               border: 1px solid rgb(211, 211, 211);
             }
-            input, p, .simple-dropdown_label {
-              margin-top: .25rem;
+            input,
+            p,
+            .simple-dropdown_label {
+              margin-top: 0.25rem;
             }
             .simple-dropdown_label p {
               margin-top: 0;
+            }
+
+            &.imageCollection {
+              .new-collection {
+                input {
+                  margin-top: 0.5rem;
+                }
+                .collection-creation-container {
+                  display: flex;
+                  justify-content: flex-start;
+                  align-items: center;
+                  font-size: 1rem;
+                  button {
+                    margin-right: 0.25rem;
+                  }
+                }
+              }
             }
           }
         }
         button {
           margin-bottom: 1.25rem;
+        }
+      }
+
+      .collections {
+        &-container {
+          .collection-info {
+            .collection {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              border: 1px solid rgb(211, 211, 211);
+              border-radius: 0.25rem;
+              padding: 0.5rem 1rem;
+              margin: 0.5rem 0;
+              p {
+                span {
+                  display: block;
+                  font-size: 0.7rem;
+                  color: #2a90f0;
+                }
+              }
+              i {
+                transition: 0.3s;
+                cursor: pointer;
+                &:hover {
+                  color: rgb(95, 95, 95);
+                }
+              }
+            }
+          }
+
+          .creation-type {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            .radio-button {
+              margin-right: 0.5rem;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              &_circle {
+                width: 1rem;
+                height: 1rem;
+                border-radius: 50%;
+                border: 1px solid rgb(211, 211, 211);
+                padding: 0.5rem;
+                position: relative;
+                transition: 0.3s;
+                cursor: pointer;
+                &::before {
+                  content: "";
+                  position: absolute;
+                  width: calc(100% - 0.25rem);
+                  height: calc(100% - 0.25rem);
+                  border-radius: 50%;
+                  top: 50%;
+                  left: 50%;
+                  transform: translate(-50%, -50%);
+                  background-color: rgb(0, 110, 255);
+                  opacity: 0;
+                  transition: 0.3s;
+                }
+                &.selected {
+                  border-color: rgb(0, 110, 255);
+                  &::before {
+                    opacity: 1;
+                  }
+                }
+              }
+              &_text {
+                cursor: pointer;
+                margin-left: 0.5rem;
+                font-size: 95%;
+              }
+            }
+          }
         }
       }
     }

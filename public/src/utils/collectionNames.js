@@ -1,7 +1,1 @@
-export default [
-  'images',
-  'jobs',
-  'demos',
-  'dealerships',
-  'tests'
-]
+export default ["images", "jobs", "demos", "dealerships", "tests"];

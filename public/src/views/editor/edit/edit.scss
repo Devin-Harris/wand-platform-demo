@@ -3,19 +3,19 @@
   margin: 1rem 0;
   font-family: sans-serif;
   h1 {
-    margin-bottom: .5rem;
+    margin-bottom: 0.5rem;
   }
   button {
     cursor: pointer;
-    margin: .5rem 0;
+    margin: 0.5rem 0;
     margin-bottom: 0;
-    border-radius: .25rem;
-    padding: .5rem .75rem;
+    border-radius: 0.25rem;
+    padding: 0.5rem 0.75rem;
     border: none;
     outline: none;
     background-color: rgb(0, 110, 255);
     color: white;
-    transition: .3s;
+    transition: 0.3s;
     &.inactive {
       background-color: rgb(211, 211, 211);
       pointer-events: none;
@@ -25,10 +25,20 @@
     }
   }
   .res {
-    margin: .5rem 0;
-    color: rgb(252, 35, 20);
+    box-sizing: content-box;
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, calc(-50% + 0.75rem));
+    background-color: rgb(252, 35, 20);
+    padding: 0.75rem 1.75rem;
+    border-radius: 0.25rem;
+    color: white;
+    font-weight: bold;
+    font-size: 1.125rem;
+    margin: 0.5rem 0;
     &.success {
-      color: rgb(19, 241, 19);
+      background-color: rgb(0, 187, 93);
     }
   }
   .content {
@@ -39,24 +49,24 @@
     width: max-content;
     margin: 0 auto;
 
-    
-    
     .input-container {
       margin: 0;
       video {
         width: 100%;
       }
-      img, video, .youtube-video {
+      img,
+      video,
+      .youtube-video {
         height: 10rem;
-        margin: .75rem 0;
+        margin: 0.75rem 0;
       }
       input {
         width: 100%;
-        margin: .5rem 0;
+        margin: 0.5rem 0;
         outline: none;
         border: 1px solid rgb(211, 211, 211);
-        border-radius: .25rem;
-        padding: .5rem .75rem;
+        border-radius: 0.25rem;
+        padding: 0.5rem 0.75rem;
         &.incorrect {
           border-color: rgb(252, 35, 20);
         }
@@ -65,8 +75,9 @@
       .uploading-container {
         margin: 1.5rem 0;
         margin-bottom: 2rem;
-        .hyperlink-video-container, .cover-video-container {
-          margin: .5rem 0;
+        .hyperlink-video-container,
+        .cover-video-container {
+          margin: 0.5rem 0;
           display: flex;
           justify-content: center;
           align-items: center;
@@ -80,7 +91,7 @@
           }
           label {
             height: auto;
-            margin-left: .5rem;
+            margin-left: 0.5rem;
             width: auto;
             cursor: pointer;
           }
@@ -101,11 +112,11 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        margin-top: .25rem;
+        margin-top: 0.25rem;
         input {
           width: unset;
           margin: 0;
-          margin-right: .5rem;
+          margin-right: 0.5rem;
           cursor: pointer;
         }
         p {
@@ -115,7 +126,9 @@
       .search-field {
         position: relative;
         &.ignored {
-          input, input::placeholder, i {
+          input,
+          input::placeholder,
+          i {
             pointer-events: none;
             background-color: rgb(211, 211, 211);
             color: rgb(126, 126, 126);
@@ -124,13 +137,13 @@
         .field {
           input {
             padding-right: 2rem;
-            transition: .3s;
+            transition: 0.3s;
           }
           i {
             position: absolute;
-            transition: .3s;
+            transition: 0.3s;
             top: 50%;
-            right: .5rem;
+            right: 0.5rem;
             transform: translateY(-50%);
           }
         }
@@ -141,7 +154,7 @@
           z-index: 5;
           background-color: white;
           border: 1px solid rgb(211, 211, 211);
-          border-radius: .25rem;
+          border-radius: 0.25rem;
           top: 100%;
           left: 50%;
           transform: translateX(-50%);
@@ -152,22 +165,22 @@
             max-height: 20rem;
             overflow-y: scroll;
             .result {
-              padding: .5rem;
+              padding: 0.5rem;
               padding-right: 1.5rem;
               display: flex;
               justify-content: flex-start;
               align-items: center;
-              transition: .3s;
+              transition: 0.3s;
               cursor: pointer;
               &:hover {
                 background-color: rgb(236, 236, 236);
               }
               .icon {
-                padding: .5rem;
+                padding: 0.5rem;
                 border-radius: 50%;
                 height: 2.5rem;
                 width: 2.5rem;
-                margin-right: .5rem;
+                margin-right: 0.5rem;
                 img {
                   height: 100%;
                   width: 100%;
@@ -178,8 +191,8 @@
                 text-align: left;
                 p {
                   cursor: pointer;
-                  transition: .3s;
-                  color:rgb(152, 195, 252);
+                  transition: 0.3s;
+                  color: rgb(152, 195, 252);
                   font-size: 70%;
                 }
               }
@@ -187,7 +200,7 @@
           }
         }
       }
-      
+
       .choosen-locations {
         &.ignored {
           pointer-events: none;
@@ -198,9 +211,9 @@
         }
         .location {
           background-color: rgb(211, 211, 211);
-          padding: .5rem;
-          border-radius: .25rem;
-          margin: .5rem auto;
+          padding: 0.5rem;
+          border-radius: 0.25rem;
+          margin: 0.5rem auto;
           .sides {
             display: flex;
             justify-content: space-between;
@@ -210,10 +223,10 @@
             }
             .rhs {
               i {
-                transition: .3s;
+                transition: 0.3s;
                 cursor: pointer;
                 &:hover {
-                  color:rgb(95, 95, 95);
+                  color: rgb(95, 95, 95);
                 }
               }
             }
@@ -222,17 +235,17 @@
             text-align: left;
             margin-top: 1rem;
             input {
-              margin: .25rem 0;
+              margin: 0.25rem 0;
             }
             .units {
               display: flex;
               justify-content: flex-start;
               align-items: center;
               p {
-                padding: .5rem 1rem;
+                padding: 0.5rem 1rem;
                 background-color: rgb(152, 195, 252);
                 cursor: pointer;
-                transition: .3s;
+                transition: 0.3s;
                 color: white;
                 &:hover {
                   background-color: rgb(0, 110, 255);
@@ -244,13 +257,12 @@
             }
           }
         }
-
       }
     }
 
     .action-label {
       margin-top: 1rem;
-      margin-bottom: .25rem;
+      margin-bottom: 0.25rem;
     }
     .action-selection {
       display: flex;
@@ -258,7 +270,7 @@
       align-items: center;
       margin-bottom: 1rem;
       .radio-button {
-        margin: 0 .5rem;
+        margin: 0 0.5rem;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -267,22 +279,22 @@
           height: 1rem;
           border-radius: 50%;
           border: 1px solid rgb(211, 211, 211);
-          padding: .5rem;
+          padding: 0.5rem;
           position: relative;
-          transition: .3s;
+          transition: 0.3s;
           cursor: pointer;
           &::before {
-            content: '';
+            content: "";
             position: absolute;
-            width: calc(100% - .25rem);
-            height: calc(100% - .25rem);
+            width: calc(100% - 0.25rem);
+            height: calc(100% - 0.25rem);
             border-radius: 50%;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             background-color: rgb(0, 110, 255);
             opacity: 0;
-            transition: .3s;
+            transition: 0.3s;
           }
           &.selected {
             border-color: rgb(0, 110, 255);
@@ -293,24 +305,24 @@
         }
         &_text {
           cursor: pointer;
-          margin-left: .5rem;
+          margin-left: 0.5rem;
           font-size: 95%;
         }
       }
     }
 
     .actions {
-      margin: .75rem auto 1.75rem auto;
+      margin: 0.75rem auto 1.75rem auto;
       .input-container {
         p {
-          margin-bottom: .25rem;
+          margin-bottom: 0.25rem;
         }
         input {
           margin-top: 0;
         }
       }
     }
-    
+
     .platform-info {
       margin-bottom: 1rem;
       display: flex;
@@ -318,7 +330,7 @@
       align-items: center;
       p {
         cursor: pointer;
-        margin-left: .5rem;
+        margin-left: 0.5rem;
         span {
           font-weight: 600;
         }
@@ -329,12 +341,12 @@
         height: 1rem;
       }
     }
-    
+
     .clickThru-info {
       margin-bottom: 1rem;
       p {
-        margin-left: .5rem;
-        margin-top: .5rem;
+        margin-left: 0.5rem;
+        margin-top: 0.5rem;
         strong {
           font-weight: 600;
         }

@@ -1,7 +1,9 @@
 <template>
   <div class="add">
     <h1>Add</h1>
-    <p class="res" :class="{ success: res.ok }" v-if="res">{{ res.message }}</p>
+    <div class="res" :class="{ success: res.ok }" v-if="res && res.message">
+      <p>{{ res.message }}</p>
+    </div>
     <button @click="$router.go(-1)">Back</button>
     <div class="content">
       <div class="input-container">

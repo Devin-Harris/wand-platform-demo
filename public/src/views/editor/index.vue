@@ -111,17 +111,107 @@
                 <input type="text" v-model="platformName" />
               </div>
               <div class="platform-field imageCollection">
-                <h4>Image collection name</h4>
+                <h4>Image collection</h4>
                 <simple-dropdown
-                  :items="collectionNames"
-                  :selectedItem="platformImageCollectionName"
-                  :placeholderText="'Please select an collection'"
-                  @selected-item="platformImageCollectionName = $event"
+                  v-if="collections && platformImageCollection"
+                  :itemDisplayKey="'display_name'"
+                  :items="collections"
+                  :selectedItem="platformImageCollection"
+                  :placeholderText="'Please select a collection'"
+                  @selected-item="setPlatformCollection($event)"
                 />
-                <!-- <input type="text" v-model="platformImageCollectionName"> -->
               </div>
             </div>
             <button @click="updatePlatform">Update platform data</button>
+          </div>
+          <div class="collections">
+            <h6>Collection info</h6>
+            <div class="collections-container">
+              <div class="collection-field">
+                <h4>Collections</h4>
+                <div class="collection-info">
+                  <div
+                    class="collection"
+                    v-for="collection in collections"
+                    :key="collection._id"
+                  >
+                    <p>
+                      {{
+                        collection.display_name
+                          ? collection.display_name
+                          : collection.collection_name
+                      }}
+                      <span v-if="collection.is_default_collection">
+                        *Default collection
+                      </span>
+                    </p>
+                    <i
+                      v-if="!collection.is_default_collection"
+                      class="fas fa-trash"
+                      @click="deleteCollectionClick(collection)"
+                    ></i>
+                  </div>
+                </div>
+              </div>
+
+              <div class="collection-field newCollection">
+                <h4>New collection</h4>
+
+                <div class="creation-type">
+                  <div
+                    class="radio-button"
+                    @click.stop="setNewCollectionAction('create')"
+                  >
+                    <div
+                      class="radio-button_circle"
+                      :class="{
+                        selected: newCollectionInfo.action === 'create',
+                      }"
+                    ></div>
+                    <div class="radio-button_text">Create</div>
+                  </div>
+                  <div
+                    class="radio-button"
+                    @click.stop="setNewCollectionAction('duplicate')"
+                  >
+                    <div
+                      class="radio-button_circle"
+                      :class="{
+                        selected: newCollectionInfo.action === 'duplicate',
+                      }"
+                    ></div>
+                    <div class="radio-button_text">Duplicate</div>
+                  </div>
+                </div>
+
+                <simple-dropdown
+                  v-if="
+                    collections &&
+                      newCollectionInfo &&
+                      newCollectionInfo.duplicate_from_collection &&
+                      newCollectionInfo.action === 'duplicate'
+                  "
+                  :items="collections.map((c) => c.collection_name)"
+                  :selectedItem="
+                    newCollectionInfo.duplicate_from_collection.collection_name
+                  "
+                  :placeholderText="'Please select a collection'"
+                  @selected-item="setNewCollectionDuplicateFrom($event)"
+                />
+                <div v-if class="new-collection">
+                  <input type="text" v-model="newCollectionInfo.name" />
+                  <div class="collection-creation-container">
+                    <button @click="createNewCollection()">
+                      {{
+                        newCollectionInfo.action === "duplicate"
+                          ? "Duplicate"
+                          : "Create"
+                      }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
